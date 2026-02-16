@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h1>EduShare API is running</h1>
+<p>This is the backend server for the EduShare platform.</p>
+<ul>
+    <li><a href="/api/">API Root</a></li>
+    <li><a href="/admin/">Admin Panel</a></li>
+</ul>
+<h2>Platform Statistics</h2>
+<ul>
+    <li>Total Lessons: {{ total_lessons }}</li>
+    <li>Total Users: {{ total_users }}</li>
+    <li>Total Certificates: {{ total_certificates }}</li>
+</ul>
+<p><small>Note: Please use the React frontend (usually at port 5173) for the full user experience.</small></p>
+{% endblock %}

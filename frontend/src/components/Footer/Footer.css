@@ -1,0 +1,202 @@
+/* 🎯 Opus AI Inspired Minimalist Footer - Full Screen Snap */
+.footer {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    padding: 5vw 10vw;
+    position: relative;
+    scroll-snap-align: start;
+    overflow: hidden;
+}
+
+.footer-glow {
+    position: absolute;
+    bottom: -10vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60vw;
+    height: 30vw;
+    background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
+    opacity: 0.15;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+.footer .container {
+    width: 100%;
+    max-width: 1400px;
+    z-index: 2;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 6vw;
+    width: 100%;
+    margin-bottom: 8rem;
+}
+
+.footer-brand-section {
+    max-width: 400px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    margin-bottom: 2rem;
+}
+
+.footer-logo-icon {
+    font-size: 2.5rem;
+    color: var(--accent-cyan);
+}
+
+.footer-logo-name {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.footer-logo-sub {
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--accent-pink);
+    text-transform: uppercase;
+    font-weight: 900;
+}
+
+.footer-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-link {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    transition: all 0.3s var(--transition);
+}
+
+.social-link:hover {
+    color: #fff;
+    transform: translateY(-5px);
+}
+
+.footer-heading {
+    font-size: 0.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #fff;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 1.2rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent-cyan);
+    padding-left: 5px;
+}
+
+.footer-contact {
+    list-style: none;
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.contact-icon {
+    color: var(--accent-cyan);
+    font-size: 1rem;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 4rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+}
+
+.heart-icon {
+    color: var(--accent-pink);
+    margin: 0 0.4rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 1024px) {
+    .footer {
+        height: auto;
+        padding: 10rem 5vw 5rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}

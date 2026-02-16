@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Learning - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fw-bold mb-4">
+        <i class="fas fa-book-reader me-2"></i>My Learning Journey
+    </h1>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h4 class="fw-bold mb-3">Recent Submissions</h4>
+            {% for submission in submissions %}
+            <div class="card mb-3 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="fw-bold mb-1">{{ submission.assignment.lesson.title }}</h5>
+                            <p class="text-muted small mb-2">Submitted on {{ submission.submitted_at|date:"M d, Y" }}
+                            </p>
+                            <span class="badge {% if submission.completed %}bg-success{% else %}bg-info{% endif %}">
+                                {{ submission.completed|yesno:"Completed,Pending" }}
+                            </span>
+                            {% if submission.score %}
+                            <span class="badge bg-primary">Score:
+                                {{submission.score}}/{{submission.assignment.max_score}}</span>
+
+
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'courses:lesson_detail' submission.assignment.lesson.id %}"
+                            class="btn btn-sm btn-outline-primary">View Lesson</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info py-4 text-center">
+                <i class="fas fa-info-circle fa-2x mb-2"></i>
+                <h5>No learning activity yet</h5>
+                <p>Start a course today and complete assignments to earn certificates!</p>
+                <a href="{% url 'courses:course_list' %}" class="btn btn-primary mt-2">Browse Courses</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <h4 class="fw-bold mb-3">My Certificates</h4>
+            {% for certificate in certificates %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-certificate text-success fw-bold me-2"></i>
+                        <h6 class="mb-0 fw-bold">{{ certificate.lesson.title }}</h6>
+                    </div>
+                    <p class="small text-muted mb-2">ID: {{ certificate.certificate_id }}</p>
+                    {% if certificate.pdf_file %}
+                    <a href="{{ certificate.pdf_file.url }}" class="btn btn-sm btn-success w-100" download>
+                        <i class="fas fa-download me-1"></i>Download PDF
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted text-center py-3">No certificates earned yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

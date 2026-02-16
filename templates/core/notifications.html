@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h1>Your Notifications</h1>
+<ul>
+    {% for n in notifications %}
+    <li><strong>{{ n.title }}</strong>: {{ n.message }}</li>
+    {% empty %}
+    <li>No notifications.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'core:home' %}">Back to Home</a>
+{% endblock %}

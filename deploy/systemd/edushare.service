@@ -1,0 +1,19 @@
+[Unit]
+Description=EduShare Gunicorn Daemon
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/edushare
+EnvironmentFile=/var/www/edushare/.env
+ExecStart=/var/www/edushare/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:8000 \
+    --log-level info \
+    --access-logfile /var/log/gunicorn/edushare_access.log \
+    --error-logfile /var/log/gunicorn/edushare_error.log \
+    edushare_project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

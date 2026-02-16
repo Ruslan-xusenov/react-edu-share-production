@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}About - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">About EduShare School</h1>
+                <p class="lead text-muted">Where Students Teach Students</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="number">{{ total_lessons }}</div>
+                        <div class="label">Video Lessons</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="number">{{ total_users }}</div>
+                        <div class="label">Students</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="number">{{ total_certificates }}</div>
+                        <div class="label">Certificates Issued</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold mb-4">
+                        <i class="fas fa-bullseye me-2 text-primary"></i>
+                        Our Mission
+                    </h2>
+                    <p class="lead">
+                        EduShare School is a revolutionary peer-to-peer learning platform where students become both
+                        teachers and learners. We believe that the best way to truly understand something is to teach it
+                        to others.
+                    </p>
+                    <p>
+                        Our platform empowers students to share their knowledge, learn from their peers, and earn
+                        recognition through certificates and points. Whether you're passionate about music, sports,
+                        computer science, languages, or any other subject, EduShare is your platform to shine!
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold mb-4">
+                        <i class="fas fa-cogs me-2 text-success"></i>
+                        How It Works
+                    </h2>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="bg-primary text-white rounded-circle"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <strong>1</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Sign Up</h5>
+                                    <p class="text-muted">Create your account using Google OAuth for quick and secure
+                                        access.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="bg-success text-white rounded-circle"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <strong>2</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Learn</h5>
+                                    <p class="text-muted">Browse lessons created by other students and complete
+                                        assignments.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="bg-warning text-white rounded-circle"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <strong>3</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Teach</h5>
+                                    <p class="text-muted">Create your own video lessons and share your knowledge with
+                                        others.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="bg-danger text-white rounded-circle"
+                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                        <strong>4</strong>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold">Earn</h5>
+                                    <p class="text-muted">Get certificates, earn points, and climb the leaderboard!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold mb-4">
+                        <i class="fas fa-star me-2 text-warning"></i>
+                        Key Features
+                    </h2>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Peer-to-Peer Learning</strong>
+                                    <p class="text-muted mb-0">Learn from students just like you</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Video Lessons</strong>
+                                    <p class="text-muted mb-0">Engaging video content in various subjects</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Assignments & Assessments</strong>
+                                    <p class="text-muted mb-0">Practice what you learn with hands-on tasks</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Auto-Generated Certificates</strong>
+                                    <p class="text-muted mb-0">Earn certificates for completed courses</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Gamification</strong>
+                                    <p class="text-muted mb-0">Earn points and compete on leaderboards</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Easy Google Login</strong>
+                                    <p class="text-muted mb-0">Quick and secure authentication</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5">
+                <h3 class="fw-bold mb-3">Ready to Start Your Learning Journey?</h3>
+                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg me-2">
+                    <i class="fas fa-user-plus me-2"></i>Join Now
+                </a>
+                <a href="{% url 'courses:course_list' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-book me-2"></i>Explore Courses
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

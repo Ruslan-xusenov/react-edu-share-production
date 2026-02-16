@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@400;700;900&display=swap');
+
+/* � Opus AI Inspired - Premium Futurist Design System */
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #050505;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --accent-cyan: #00f2fe;
+  --accent-pink: #ff0080;
+  --accent-purple: #7000ff;
+  --border: rgba(255, 255, 255, 0.1);
+  --transition: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  --font-heading: 'Michroma', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* 🔌 Compatibility Mappings (Fixes missing text/backgrounds) */
+  --primary: var(--accent-cyan);
+  --primary-600: var(--accent-cyan);
+  --primary-50: rgba(0, 242, 254, 0.1);
+  --secondary: var(--accent-pink);
+  --background: var(--bg-primary);
+  --surface: var(--bg-secondary);
+  --dark-surface: #0a0a0a;
+  --gray-50: rgba(255, 255, 255, 0.02);
+  --gray-100: rgba(255, 255, 255, 0.05);
+  --gray-200: rgba(255, 255, 255, 0.1);
+  --gray-300: rgba(255, 255, 255, 0.2);
+  --gray-500: #888;
+  --gray-600: #666;
+  --gray-700: #444;
+  /* Note: We should ideally avoid dark-on-dark, but mapping these helps */
+}
+
+::selection {
+  background: var(--accent-cyan);
+  color: #000;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: none !important;
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+#root,
+.app {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  background: var(--bg-primary);
+}
+
+.main-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🧱 Horizontal Layout Components */
+.horizontal-section {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Allow vertical scroll within sections if needed */
+  position: relative;
+}
+
+.horizontal-page {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: max-content;
+}
+
+/* 🔤 Opus Typography */
+h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Custom Cursor - Opus Multi-Neon Style */
+.custom-cursor {
+  width: 12px;
+  height: 12px;
+  background: conic-gradient(from 0deg,
+      #00f2fe,
+      /* Blue */
+      #7000ff,
+      /* Purple */
+      #ff0080,
+      /* Pink */
+      #ff0000,
+      /* Red */
+      #00ff00,
+      /* Green */
+      #00f2fe
+      /* back to Blue */
+    );
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(0, 242, 254, 0.5);
+}
+
+.custom-cursor-follower {
+  width: 45px;
+  height: 45px;
+  border: 2px solid transparent;
+  background: linear-gradient(#000, #000) padding-box,
+    conic-gradient(#00f2fe, #7000ff, #ff0080, #ff0000, #00ff00, #00f2fe) border-box;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  transition: transform 0.1s ease-out;
+  transform: translate(-50%, -50%);
+  opacity: 0.6;
+}
+
+/* Premium Buttons */
+.btn {
+  padding: 1.2rem 3rem;
+  font-family: var(--font-body);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: #fff;
+  color: #000;
+}
+
+.btn:hover {
+  background: #fff;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* 🧊 Glassmorphism Utility */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ⌨️ Form Elements Visibility Fixes */
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+  opacity: 1;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 🔦 Contrast & Glow Utilities */
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.sub-text {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Scroll Progress */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+  z-index: 10000;
+  transition: width 0.3s ease;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent-cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

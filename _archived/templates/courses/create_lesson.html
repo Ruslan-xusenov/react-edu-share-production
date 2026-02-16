@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Lesson - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Create a New Lesson
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Share your knowledge with other students. You'll earn 100 points for
+                        creating a lesson!</p>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <h5 class="fw-bold mb-3">Lesson Information</h5>
+                        {{ lesson_form|crispy }}
+
+                        <hr class="my-4">
+
+                        <h5 class="fw-bold mb-3">Assignment</h5>
+                        <p class="text-muted small">Create an assignment to help students practice what they learned</p>
+                        {{ assignment_form|crispy }}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check-circle me-2"></i>Create Lesson
+                            </button>
+                            <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Tips for Creating Great Lessons
+                    </h6>
+                    <ul class="small text-muted mb-0">
+                        <li>Use a clear and descriptive title</li>
+                        <li>Write a detailed description explaining what students will learn</li>
+                        <li>Upload your video to YouTube as "Unlisted" and paste the link</li>
+                        <li>Create a meaningful assignment that helps students practice</li>
+                        <li>Choose the appropriate difficulty level</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

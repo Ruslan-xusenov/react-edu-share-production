@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Courses - EduShare School{% endblock %}
+
+{% block description %}Explore our collection of peer-to-peer courses. Learn from students and share your knowledge
+across various subjects including Music, Sport, Computer Science, and more.{% endblock %}
+
+{% block og_title %}Browse Courses - EduShare School{% endblock %}
+{% block og_description %}Explore our collection of peer-to-peer courses. Learn from students and share your
+knowledge.{% endblock %}
+
+{% block schema %}
+{% if lessons %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {% for lesson in lessons %}
+    {
+      "@type": "ListItem",
+      "position": {{ forloop.counter }},
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'courses:lesson_detail' lesson.id %}",
+      "name": "{{ lesson.title|escapejs }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="fw-bold mb-4">
+        <i class="fas fa-book me-2"></i>Browse Courses
+    </h1>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0" placeholder="Search lessons..."
+                            value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select name="level" class="form-select">
+                        <option value="">All Levels</option>
+                        <option value="beginner" {% if selected_level == "beginner" %}selected{% endif %}>Beginner
+                        </option>
+                        <option value="intermediate" {% if selected_level == "intermediate" %}selected{% endif %}>
+                            Intermediate</option>
+                        <option value="advanced" {% if selected_level == "advanced" %}selected{% endif %}>Advanced
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for lesson in lessons %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card course-card hover-lift h-100 shadow-sm border-0">
+                {% if lesson.thumbnail %}
+                <img src="{{ lesson.thumbnail.url }}" class="card-img-top" alt="{{ lesson.title }}"
+                    style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 200px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-video text-white" style="font-size: 3rem;"></i>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <div class="mb-2">
+                        <span class="badge bg-primary-soft text-primary">{{ lesson.sub_category.category.display_name
+                            }}</span>
+                        <span class="badge bg-secondary-soft text-secondary">{{ lesson.get_level_display }}</span>
+                    </div>
+                    <h5 class="card-title fw-bold mb-3">{{ lesson.title }}</h5>
+                    <p class="card-text text-muted small mb-4">{{ lesson.description|truncatewords:20 }}</p>
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                {% if lesson.author.avatar %}
+                                <img src="{{ lesson.author.avatar.url }}" class="rounded-circle me-2" width="24"
+                                    height="24">
+                                {% else %}
+                                <i class="fas fa-user-circle text-muted me-2"></i>
+                                {% endif %}
+                                <small class="text-muted">{{ lesson.author.full_name|truncatewords:1 }}</small>
+                            </div>
+                            <div class="stats small text-muted">
+                                <span class="me-2"><i class="fas fa-eye me-1"></i>{{ lesson.views }}</span>
+                                <span><i class="fas fa-heart me-1 text-danger"></i>{{ lesson.likes }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'courses:lesson_detail' lesson.id %}" class="btn btn-primary w-100">
+                            <i class="fas fa-play-circle me-2"></i>Start Learning
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card py-5 border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h3 class="fw-bold">No courses found</h3>
+                    <p class="text-muted">Try adjusting your filters or search query.</p>
+                    <a href="{% url 'courses:course_list' %}" class="btn btn-outline-primary mt-2">Clear all filters</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

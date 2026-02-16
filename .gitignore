@@ -1,0 +1,86 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3.bak
+db.sqlite3-journal
+/media
+/staticfiles
+/static_root
+
+# Environment
+.env
+.env.production
+.env.local
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Backups
+backups/
+*.sql
+*.sql.gz
+*.tar.gz
+*.zip
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Security
+*.pem
+*.key
+*.crt
+*.p12
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Submit Assignment - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Assignment
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">{{ assignment.lesson.title }}</h5>
+
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Assignment Question:</h6>
+                        <p class="mb-0">{{ assignment.question_text }}</p>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> After submitting, you'll automatically receive a certificate and earn
+                            50 points!
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Submit Assignment
+                            </button>
+                            <a href="{% url 'courses:lesson_detail' assignment.lesson.id %}"
+                                class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Lesson
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

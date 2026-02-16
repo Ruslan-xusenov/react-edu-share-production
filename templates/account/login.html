@@ -1,0 +1,67 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}Kirish - EduShare{% endblock %}
+
+{% block content %}
+<div class="auth-title">
+    <h2>Xush kelibsiz</h2>
+    <p>O'qishni davom ettirish uchun tizimga kiring</p>
+</div>
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+<div class="social-login">
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+</div>
+
+<div style="text-align: center; margin: 1.5rem 0; color: var(--text-muted); font-size: 0.875rem; position: relative;">
+    <span style="background: var(--card-bg); padding: 0 1rem; position: relative; z-index: 1;">yoki email orqali</span>
+    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid var(--border); z-index: 0;">
+    </div>
+</div>
+{% endif %}
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <ul class="errorlist">
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="errorlist">
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+
+    <button type="submit">Kirish</button>
+
+    <div style="text-align: right; margin-top: 0.75rem;">
+        <a href="{% url 'account_reset_password' %}"
+            style="font-size: 0.875rem; color: var(--text-muted); text-decoration: none;">Parolni unutdingizmi?</a>
+    </div>
+</form>
+
+<div class="extra-links">
+    Hisobingiz yo'qmi? <a href="{{ signup_url }}">Ro'yxatdan o'ting</a>
+</div>
+{% endblock %}

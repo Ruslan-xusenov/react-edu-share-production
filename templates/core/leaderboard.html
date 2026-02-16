@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h1>Leaderboard</h1>
+<ol>
+    {% for user in top_contributors %}
+    <li>{{ user.full_name }} - {{ user.points }} points</li>
+    {% endfor %}
+</ol>
+<a href="{% url 'core:home' %}">Back to Home</a>
+{% endblock %}

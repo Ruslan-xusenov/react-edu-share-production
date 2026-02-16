@@ -1,0 +1,205 @@
+/* 🏠 Home Page - Opus.ai Inspired Premium Redesign */
+
+.homepage-horizontal {
+    display: flex;
+    height: 100vh;
+}
+
+.hero-section,
+.stats-section,
+.categories-section,
+.courses-section,
+.cta-section {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10vw;
+    position: relative;
+    scroll-snap-align: start;
+    overflow: hidden;
+    background: #000;
+}
+
+/* Hero Section - Voxel Glow */
+.hero-orb {
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.2;
+    z-index: 1;
+}
+
+.hero-orb-1 {
+    top: -10vw;
+    left: -10vw;
+    background: var(--accent-cyan);
+}
+
+.hero-orb-2 {
+    bottom: -10vw;
+    right: -10vw;
+    background: var(--accent-pink);
+}
+
+.hero-content {
+    max-width: 1200px;
+    z-index: 3;
+    text-align: left;
+}
+
+.hero-title {
+    margin-bottom: 3rem;
+    font-size: clamp(4rem, 10vw, 8rem);
+}
+
+.hero-gradient-text {
+    color: transparent;
+    -webkit-text-stroke: 1px #fff;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 4rem;
+    max-width: 600px;
+    letter-spacing: 0.05em;
+}
+
+/* Stats Section - Clean Minimal */
+.stats-grid {
+    display: flex;
+    gap: 12vw;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-family: var(--font-heading);
+    font-size: 10rem;
+    letter-spacing: -0.05em;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--accent-cyan);
+    margin-top: 1rem;
+}
+
+/* Categories Section - Bento Style Grid */
+.categories-container {
+    width: 100%;
+}
+
+.categories-container h2 {
+    margin-bottom: 6rem;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.category-card {
+    background: #050505;
+    border: 1px solid var(--border);
+    padding: 3rem;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.5s ease;
+}
+
+.category-card:hover {
+    border-color: #fff;
+    background: #0a0a0a;
+    transform: translateY(-10px);
+}
+
+.category-icon {
+    font-size: 3rem;
+    color: #fff;
+}
+
+.category-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+}
+
+/* Featured Courses - Cinematic Cards */
+.courses-container {
+    width: 100%;
+}
+
+.courses-grid-horizontal {
+    display: flex;
+    gap: 2rem;
+}
+
+.course-card {
+    width: 500px;
+    background: #000;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.course-card:hover {
+    border-color: var(--accent-cyan);
+}
+
+.course-image-wrapper {
+    aspect-ratio: 21/9;
+    background: #0a0a0a;
+}
+
+.course-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    transition: opacity 0.4s ease;
+}
+
+.course-card:hover .course-image {
+    opacity: 1;
+}
+
+.course-info {
+    padding: 2.5rem;
+}
+
+.course-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+}
+
+/* CTA Section */
+.cta-content h2 {
+    font-size: clamp(3rem, 12vw, 10rem);
+    text-align: center;
+}
+
+.cta-highlight {
+    background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}

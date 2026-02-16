@@ -1,0 +1,419 @@
+/* 🎨 Create Lesson Page - Minimalist Redesign */
+
+.create-lesson-page {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    overflow-y: auto;
+    background-color: var(--bg-primary);
+    padding: 100px 5vw;
+    position: relative;
+}
+
+/* Base Container */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Section */
+.create-lesson-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.create-lesson-header .header-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.create-lesson-header h1 {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.create-lesson-header p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+/* Modern Form Card */
+.create-lesson-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    transition: border-color var(--transition);
+}
+
+.create-lesson-card:focus-within {
+    border-color: var(--primary);
+}
+
+/* Form Layout */
+.form-section {
+    margin-bottom: 3rem;
+}
+
+.form-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title svg {
+    color: var(--primary);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    transition: all var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg-primary);
+    box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Select Styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* File Upload */
+.file-upload-box label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition);
+    color: var(--text-secondary);
+    gap: 0.5rem;
+}
+
+.file-upload-box label:hover {
+    border-color: var(--primary);
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+.file-upload-box input {
+    display: none;
+}
+
+/* Video Mode Selector */
+.video-mode-selector {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    padding: 0.3rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+}
+
+.video-mode-selector button {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.video-mode-selector button.active {
+    background: var(--bg-primary);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+}
+
+.btn-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Success State */
+.success-message {
+    text-align: center;
+    padding: 2rem;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--success);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1.5rem;
+}
+
+/* Quiz Questions */
+.question-item-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.q-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.btn-remove-q {
+    background: transparent;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0.6;
+}
+
+.btn-remove-q:hover {
+    opacity: 1;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.option-input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+}
+
+.option-input-wrap span {
+    font-weight: 800;
+    color: var(--primary);
+    margin-right: 0.75rem;
+}
+
+.option-input-wrap input {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.option-input-wrap button {
+    background: transparent;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 1.25rem;
+}
+
+.option-input-wrap.is-correct {
+    border-color: var(--success);
+}
+
+.option-input-wrap.is-correct button {
+    color: var(--success);
+}
+
+/* Sub-category Actions */
+.label-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inline-action-btn {
+    font-size: 0.8rem;
+    color: var(--primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.inline-add-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Orbs Background (Subtle) */
+.create-lesson-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.05;
+}
+
+.bg-orb-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--primary);
+    top: -200px;
+    left: -200px;
+}
+
+.bg-orb-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent);
+    bottom: -150px;
+    right: -150px;
+}
+
+/* Dark Mode Overrides */
+body.dark-mode .create-lesson-card {
+    background: var(--dark-surface);
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea,
+body.dark-mode .form-group select {
+    background: #1a1a1c;
+}
+
+body.dark-mode .video-mode-selector {
+    background: #1a1a1c;
+}
+
+body.dark-mode .video-mode-selector button.active {
+    background: var(--dark-surface);
+}
+
+/* Animations */
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.question-item-card {
+    animation: fadeInSlide 0.4s ease-out;
+}
+
+@media (max-width: 640px) {
+    .create-lesson-header h1 {
+        font-size: 2.5rem;
+    }
+
+    .create-lesson-card {
+        padding: 1.5rem;
+    }
+
+    .form-row,
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+}

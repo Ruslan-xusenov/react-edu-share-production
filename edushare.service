@@ -1,0 +1,24 @@
+[Unit]
+Description=EduShare Gunicorn Application
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/home/user/edushare
+Environment="PATH=/home/user/edushare/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=edushare_project.settings_production"
+EnvironmentFile=/home/user/edushare/.env.production
+ExecStart=/home/user/edushare/venv/bin/gunicorn \
+    --config /home/user/edushare/gunicorn_config.py \
+    edushare_project.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

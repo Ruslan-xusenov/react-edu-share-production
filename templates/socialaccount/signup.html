@@ -1,0 +1,51 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block title %}Ro'yxatdan o'tishni yakunlash - EduShare{% endblock %}
+
+{% block content %}
+<div class="auth-title">
+    <h2>Profilni yakunlash</h2>
+    <p>Siz <strong>{{ account.get_provider.name }}</strong> orqali muvaffaqiyatli kirdingiz. <strong>EduShare</strong>
+        platformasida hisobingizni to'liq faollashtirish uchun quyidagi ma'lumotlarni tasdiqlang.</p>
+</div>
+
+<form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <ul class="errorlist">
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <span class="helptext">{{ field.help_text|safe }}</span>
+        {% endif %}
+        {% if field.errors %}
+        <ul class="errorlist">
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+
+    <button type="submit">Hisobni yaratish</button>
+</form>
+
+<div class="extra-links">
+    <p>Ro'yxatdan o'tish orqali siz bizning <a href="#">Foydalanish shartlari</a>ga rozilik bildirasiz.</p>
+</div>
+{% endblock %}

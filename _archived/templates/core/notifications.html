@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Bildirishnomalar - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold text-primary">
+                        <i class="fas fa-bell me-2"></i>Bildirishnomalar
+                    </h4>
+                </div>
+                <div class="card-body p-0">
+                    {% if notifications %}
+                    <div class="list-group list-group-flush">
+                        {% for notification in notifications %}
+                        <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}"
+                            class="list-group-item list-group-item-action py-3 {% if not notification.is_read %}bg-light border-start border-primary border-4{% endif %}">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <h6 class="mb-1 fw-bold">{{ notification.title }}</h6>
+                                <small class="text-muted">{{ notification.created_at|date:"H:i, d.m.Y" }}</small>
+                            </div>
+                            <p class="mb-1 text-muted small">{{ notification.message }}</p>
+                            <div class="mt-2">
+                                <span
+                                    class="badge {% if notification.notification_type == 'comment' %}bg-info{% elif notification.notification_type == 'submission' %}bg-warning{% elif notification.notification_type == 'grade' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ notification.get_notification_type_display }}</span>
+
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-bell-slash fa-4x text-light mb-3"></i>
+                        <h5 class="text-muted">Hozircha bildirishnomalar yo'q</h5>
+                        <a href="{% url 'courses:course_list' %}" class="btn btn-primary mt-3">Darslarni ko'rish</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

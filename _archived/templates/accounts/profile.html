@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - EduShare School{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" class="profile-avatar mb-3" alt="{{ user.full_name }}">
+                    {% else %}
+                    <div
+                        class="profile-avatar mx-auto mb-3 bg-primary d-flex align-items-center justify-content-center">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+
+                    <h3 class="fw-bold">{{ user.full_name }}</h3>
+                    <p class="text-muted">{{ user.school|default:"EduShare Member" }}</p>
+                    {% if user.grade %}
+                    <p class="text-muted">Grade: {{ user.grade }}</p>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <span class="badge bg-warning text-dark" style="font-size: 1.2rem; padding: 0.5rem 1rem;">
+                            <i class="fas fa-star me-1"></i>{{ user.points }} Points
+                        </span>
+                    </div>
+
+                    {% if user.bio %}
+                    <p class="small">{{ user.bio }}</p>
+                    {% endif %}
+
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary w-100">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">My Stats</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-chalkboard-teacher text-primary me-2"></i>
+                            <strong>{{ user.get_created_lessons_count }}</strong> lessons created
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-certificate text-success me-2"></i>
+                            <strong>{{ user.get_completed_courses_count }}</strong> courses completed
+                        </li>
+                        <li>
+                            <i class="fas fa-calendar text-warning me-2"></i>
+                            Joined {{ user.created_at|date:"F Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <ul class="nav nav-tabs mb-4 responsive-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="lessons-tab" data-bs-toggle="tab" data-bs-target="#lessons"
+                        type="button">
+                        <i class="fas fa-chalkboard-teacher me-1"></i>My Lessons
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="certificates-tab" data-bs-toggle="tab" data-bs-target="#certificates"
+                        type="button">
+                        <i class="fas fa-certificate me-1"></i>Certificates
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="interests-tab" data-bs-toggle="tab" data-bs-target="#interests"
+                        type="button">
+                        <i class="fas fa-heart me-1"></i>Interests
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="profileTabsContent">
+                <div class="tab-pane fade show active" id="lessons" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Lessons I Created</h5>
+                        {% if user.is_staff %}
+                        <a href="{% url 'courses:create_lesson' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>New Lesson
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-3">
+                        {% for lesson in user.lessons_created.all %}
+                        <div class="col-md-6">
+                            <div class="card hover-lift">
+                                <div class="card-body">
+                                    <h6 class="fw-bold">{{ lesson.title }}</h6>
+                                    <p class="small text-muted mb-2">{{ lesson.description|truncatewords:10 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-eye me-1"></i>{{ lesson.views }}
+                                            <i class="fas fa-heart ms-2 me-1"></i>{{ lesson.likes }}
+                                        </small>
+                                        <a href="{% url 'courses:lesson_detail' lesson.id %}"
+                                            class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                You haven't created any lessons yet.
+                                {% if user.is_staff %}
+                                <a href="{% url 'courses:create_lesson' %}">Create your first lesson</a>!
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="certificates" role="tabpanel">
+                    <h5 class="fw-bold mb-3">My Certificates</h5>
+
+                    {% for certificate in user.certificates.all %}
+                    <div class="card mb-3 hover-lift">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold">{{ certificate.lesson.title }}</h6>
+                                    <p class="text-muted small mb-1">
+                                        <span>{{certificate.lesson.sub_category.category.display_name}}</span> -
+                                        <span>{{certificate.lesson.sub_category.name}}</span></p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>Issued:
+                                        <span>{{certificate.issued_at|date:"F d, Y"}}</span>
+                                    </small>
+
+
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-id-card me-1"></i>ID: {{ certificate.certificate_id }}
+                                    </small>
+                                </div>
+                                <div>
+                                    {% if certificate.pdf_file %}
+                                    <a href="{{ certificate.pdf_file.url }}" class="btn btn-success btn-sm" download>
+                                        <i class="fas fa-download me-1"></i>Download
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No certificates yet. Complete lessons and assignments to earn certificates!
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="tab-pane fade" id="interests" role="tabpanel">
+                    <h5 class="fw-bold mb-3">My Interests</h5>
+                    {% if user.interests %}
+                    <p>{{ user.interests }}</p>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Add your interests to help others find you and connect with like-minded learners!
+                        <a href="{% url 'accounts:edit_profile' %}">Edit Profile</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

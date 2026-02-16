@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} - EduShare School{% endblock %}
+
+{% block description %}{{ lesson.description|striptags|truncatechars:160 }}{% endblock %}
+
+{% block og_title %}{{ lesson.title }} - EduShare School{% endblock %}
+{% block og_description %}{{ lesson.description|striptags|truncatechars:200 }}{% endblock %}
+{% block og_image %}{% if lesson.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ lesson.thumbnail.url }}{%
+else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block twitter_title %}{{ lesson.title }} - EduShare School{% endblock %}
+{% block twitter_description %}{{ lesson.description|striptags|truncatechars:200 }}{% endblock %}
+{% block twitter_image %}{% if lesson.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ lesson.thumbnail.url
+}}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "{{ lesson.title|escapejs }}",
+  "description": "{{ lesson.description|striptags|escapejs }}",
+  "url": "{{ request.build_absolute_uri }}",
+  "image": "{% if lesson.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ lesson.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.jpg' %}{% endif %}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ lesson.author.full_name|escapejs }}"
+  },
+  "dateCreated": "{{ lesson.created_at|date:'c' }}",
+  "dateModified": "{{ lesson.updated_at|date:'c' }}",
+  "educationalLevel": "{{ lesson.get_level_display }}",
+  "learningResourceType": "Lesson",
+  "isAccessibleForFree": true,
+  "inLanguage": "uz"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="video-container">
+                        {% if lesson.video_file %}
+                        <video width="100%" height="auto" controls class="rounded shadow-sm">
+                            <source src="{{ lesson.video_file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        {% elif lesson.video_url %}
+                        <iframe src="{{ lesson.get_youtube_embed_url }}"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen></iframe>
+                        {% else %}
+                        <div class="bg-dark text-white d-flex align-items-center justify-content-center p-5 rounded">
+                            <i class="fas fa-video-slash fa-3x"></i>
+                            <p class="ms-3 mb-0">Video mavjud emas.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if lesson.video_url %}
+                    <div class="p-2 text-center bg-light border-top">
+                        <small class="text-muted">Video yuklanmasa: </small>
+                        <a href="{{ lesson.video_url }}" target="_blank"
+                            class="btn btn-link btn-sm text-decoration-none">
+                            <i class="fab fa-youtube me-1"></i>YouTubeda ko'rish
+                        </a>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h3 fw-bold mb-2">{{ lesson.title }}</h1>
+                            <div class="mb-2">
+                                <span class="badge bg-primary">{{ lesson.sub_category.category.display_name }}</span>
+                                <span class="badge bg-secondary">{{ lesson.sub_category.name }}</span>
+                                <span class="badge bg-info">{{ lesson.get_level_display }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            {% if user.is_staff %}
+                            <form action="{% url 'courses:delete_lesson' lesson.id %}" method="POST"
+                                style="display: inline;"
+                                onsubmit="return confirm('Haqiqatan ham ushbu darsni o\'chirmoqchimisiz?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash me-1"></i>O'chirish
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'courses:like_lesson' lesson.id %}" method="POST"
+                                style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="btn {% if has_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                    <i class="fas fa-heart me-1"></i>{{ lesson.likes }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-outline-danger" disabled>
+                                <i class="fas fa-heart me-1"></i>{{ lesson.likes }}
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        {% if lesson.author.avatar %}
+                        <img src="{{ lesson.author.avatar.url }}" width="50" height="50" class="rounded-circle me-3"
+                            alt="{{ lesson.author.full_name }}">
+                        {% else %}
+                        <div class="bg-primary rounded-circle me-3"
+                            style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ lesson.author.full_name }}</h6>
+                            <small class="text-muted">{{ lesson.author.school|default:"EduShare Instructor" }}</small>
+                        </div>
+                        <div class="ms-auto">
+                            <small class="text-muted">
+                                <i class="fas fa-eye me-1"></i>{{ lesson.views }} views
+                            </small>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5 class="fw-bold mb-3">Description</h5>
+                    <p>{{ lesson.description }}</p>
+
+                    {% if lesson.duration %}
+                    <p class="text-muted">
+                        <i class="fas fa-clock me-2"></i>Duration: {{ lesson.duration }}
+                    </p>
+                    {% endif %}
+
+                    {% if lesson.resource_file %}
+                    <div class="mt-4 p-3 bg-light rounded border">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-file-download me-2"></i>Qo'shimcha materiallar:</h6>
+                        <a href="{{ lesson.resource_file.url }}" class="btn btn-sm btn-outline-primary" download>
+                            <i class="fas fa-download me-1"></i>Materialni yuklab olish
+                        </a>
+
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {% if lesson.assignment %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Assignment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ lesson.assignment.question_text }}</p>
+
+                    {% if user.is_authenticated %}
+                    {% if user_submission %}
+                    <div class="alert {% if user_submission.completed %}alert-success{% else %}alert-info{% endif %}">
+                        <h6 class="alert-heading">
+                            {% if user_submission.completed %}
+                            <i class="fas fa-check-circle me-2"></i>Assignment Completed!
+                            {% else %}
+                            <i class="fas fa-info-circle me-2"></i>Assignment Submitted
+                            {% endif %}
+                        </h6>
+                        <p class="mb-0">Submitted on: {{ user_submission.submitted_at|date:"F d, Y" }}</p>
+                        {% if user_submission.score %}
+                        <p class="mb-0 fw-bold">Score: {{ user_submission.score }}/{{ lesson.assignment.max_score }}</p>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'courses:submit_assignment' lesson.assignment.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Edit Submission
+                    </a>
+                    {% else %}
+                    <a href="{% url 'courses:submit_assignment' lesson.assignment.id %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Assignment
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lock me-2"></i>Please <a href="{% url 'account_login' %}">login</a> to submit
+                        this assignment.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-comments text-primary me-2"></i>Izohlar ({{ comments.count }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        {% load crispy_forms_tags %}
+                        {{ comment_form|crispy }}
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary btn-sm px-4">Yuborish</button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-light border text-center mb-4">
+                        <small class="text-muted">Izoh qoldirish uchun <a href="{% url 'account_login' %}">tizimga
+                                kiring</a>.</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="comment-list">
+                        {% for comment in comments %}
+                        <div class="mb-4 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex mb-2">
+                                {% if comment.user.avatar %}
+                                <img src="{{ comment.user.avatar.url }}" width="40" height="40"
+                                    class="rounded-circle me-3">
+                                {% else %}
+                                <div class="bg-primary-soft rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user-circle text-primary"></i>
+                                </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0 fw-bold small">{{comment.user.full_name}}</h6>
+                                        <small class="text-muted"
+                                            style="font-size:0.75rem">{{comment.created_at|date:"H:i, d.m.Y"}}</small>
+                                    </div>
+
+                                    <p class="mb-2 small text-secondary">{{ comment.content }}</p>
+
+                                    {% if user.is_authenticated %}
+                                    <button
+                                        class="btn btn-link btn-sm p-0 text-decoration-none small text-primary fw-medium"
+                                        onclick="toggleReplyForm('{{ comment.id }}')">
+                                        <i class="fas fa-reply me-1"></i>Javob berish
+                                    </button>
+
+                                    <div id="reply-form-{{ comment.id }}" class="mt-3 d-none">
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                            <textarea name="content" class="form-control form-control-sm mb-2" rows="2"
+                                                placeholder="Javobingizni yozing..." required></textarea>
+                                            <div class="text-end">
+                                                <button type="button" class="btn btn-light btn-sm me-2"
+                                                    onclick="toggleReplyForm('{{ comment.id }}')">Bekor qilish</button>
+                                                <button type="submit" class="btn btn-primary btn-sm">Yuborish</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Replies -->
+                            {% if comment.replies.all %}
+                            <div class="ms-5 mt-3 ps-3 border-start">
+                                {% for reply in comment.replies.all %}
+                                <div class="d-flex mb-3">
+                                    {% if reply.user.avatar %}
+                                    <img src="{{ reply.user.avatar.url }}" width="30" height="30"
+                                        class="rounded-circle me-3">
+                                    {% else %}
+                                    <div class="bg-light rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                        style="width: 30px; height: 30px;">
+                                        <i class="fas fa-user-circle text-muted" style="font-size: 0.8rem;"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0 fw-bold" style="font-size:0.8rem">{{reply.user.full_name}}
+                                            </h6>
+                                            <small class="text-muted"
+                                                style="font-size:0.7rem">{{reply.created_at|date:"H:i, d.m.Y"}}</small>
+                                        </div>
+
+                                        <p class="mb-0 small text-secondary">{{ reply.content }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                            <p class="text-muted small">Hozircha izohlar yo'q. Birinchi bo'lib izoh qoldiring!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h6 class="fw-bold mb-3">About the Instructor</h6>
+                    {% if lesson.author.avatar %}
+                    <img src="{{ lesson.author.avatar.url }}" class="profile-avatar mb-3"
+                        alt="{{ lesson.author.full_name }}">
+                    {% else %}
+                    <div
+                        class="profile-avatar mx-auto mb-3 bg-primary d-flex align-items-center justify-content: center;">
+                        <i class="fas fa-user fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+                    <h5 class="fw-bold">{{ lesson.author.full_name }}</h5>
+                    <p class="text-muted mb-2">{{ lesson.author.school|default:"EduShare Instructor" }}</p>
+                    <div class="mb-3">
+                        <span class="badge bg-warning text-dark">{{ lesson.author.points }} points</span>
+                    </div>
+                    {% if lesson.author.bio %}
+                    <p class="small">{{ lesson.author.bio }}</p>
+                    {% endif %}
+                    <a href="{% url 'accounts:user_profile' lesson.author.id %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user me-1"></i>View Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Lesson Stats</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-eye text-primary me-2"></i>
+                            <strong>{{ lesson.views }}</strong> views
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-heart text-danger me-2"></i>
+                            <strong>{{ lesson.likes }}</strong> likes
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-calendar text-success me-2"></i>
+                            Created on {{ lesson.created_at|date:"F d, Y" }}
+                        </li>
+                        <li>
+                            <i class="fas fa-signal text-warning me-2"></i>
+                            <strong>{{ lesson.get_level_display }}</strong> level
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById(`reply-form-${commentId}`);
+        if (form.classList.contains('d-none')) {
+            form.classList.remove('d-none');
+        } else {
+            form.classList.add('d-none');
+        }
+    }
+</script>
+{% endblock %}
