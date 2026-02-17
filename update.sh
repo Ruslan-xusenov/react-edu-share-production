@@ -12,7 +12,8 @@ echo "========================================="
 echo "  EduShare - Kodni Yangilash"
 echo "========================================="
 
-PROJECT_DIR="/var/www/edushare"
+# Avtomatik ravishda script joylashgan papkani aniqlash
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $PROJECT_DIR
 
 # 1. GitHub'dan yangi kodni olish

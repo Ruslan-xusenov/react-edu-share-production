@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_NAME="edushare"
-PROJECT_DIR="/var/www/edushare"
+PROJECT_DIR="/home/react-edu-share-production"
 VENV_DIR="$PROJECT_DIR/venv"
 USER="www-data"
 GROUP="www-data"
