@@ -20,7 +20,6 @@ cd $PROJECT_DIR
 echo "1. GitHub'dan yangi kod yuklanmoqda..."
 git pull origin main
 
-# 2. Virtual environment'ni faollashtirish va o'zgaruvchilarni yuklash
 echo "2. Muhit tayyorlanmoqda..."
 if [ -f .env.production ]; then
     export $(grep -v '^#' .env.production | xargs)

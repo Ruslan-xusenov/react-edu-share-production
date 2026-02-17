@@ -26,21 +26,24 @@ SECURE_HSTS_PRELOAD = True
 # SSL Proxy Settings (Nginx orqali ishlatilsa)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Database - PostgreSQL (Production)
+# Database - SQLite3 (Production'da ham ishlatish uchun)
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# Agar kelajakda PostgreSQL'ga o'tsangiz, .env orqali yoqish mumkin
+if os.getenv('DB_TYPE') == 'postgresql':
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'edushare_db'),
         'USER': os.getenv('DB_USER', 'edushare_user'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
-        'CONN_MAX_AGE': 600,  # Connection pooling
-        'OPTIONS': {
-            'connect_timeout': 10,
-        }
     }
-}
 
 # Static files (production)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
