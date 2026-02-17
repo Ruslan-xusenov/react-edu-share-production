@@ -6,13 +6,13 @@ Advanced Security Settings - settings.py ga import qiling
 # ADVANCED SECURITY CONFIGURATIONS
 # =============================================================================
 
+import os
+
 # CORS Settings - Cross-Origin Resource Sharing
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React Frontend
-    "http://127.0.0.1:5173",  # React Frontend
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000'
+).split(',')
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',

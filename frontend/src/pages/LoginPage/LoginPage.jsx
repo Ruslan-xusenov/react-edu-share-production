@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { FaLock, FaEnvelope, FaGraduationCap, FaGoogle } from 'react-icons/fa';
 import './AuthPage.css';
 
-import apiClient, { API_ENDPOINTS } from '../../config/api';
+import apiClient, { API_ENDPOINTS, BACKEND_URL } from '../../config/api';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -72,7 +72,7 @@ const LoginPage = () => {
 
                         <div className="social-login">
                             <button
-                                onClick={() => window.location.href = 'http://localhost:8000/accounts/google/login/'}
+                                onClick={() => window.location.href = `${BACKEND_URL}/accounts/google/login/`}
                                 className="social-btn google"
                                 style={{ width: '100%', justifyContent: 'center', gap: '15px', fontSize: '1.1rem', padding: '14px' }}
                             >
