@@ -56,16 +56,16 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api-auth/', include('rest_framework.urls')),
     
-    path('', include('core.urls')),
+    # React App Root & Catch-all
+    # Bu qism hamma React routinglarini (shuningdek asosiy sahifani) ushlab oladi
+    re_path(r'^(?!api|admin|media|static|accounts|sitemap.xml|robots.txt).*$', TemplateView.as_view(template_name='index.html'), name='react-app'),
+
+    path('core/', include('core.urls')),
 
     # SEO
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
     
-    # React App Catch-all
-    # path('', TemplateView.as_view(template_name='index.html'), name='index'),
-    # Use re_path to catch all sub-routes for React Router
-    re_path(r'^(?!api|admin|media|static|accounts|sitemap.xml|robots.txt).*$', TemplateView.as_view(template_name='index.html')),
 ]
 
 if settings.DEBUG:
