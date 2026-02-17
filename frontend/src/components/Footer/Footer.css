@@ -183,20 +183,72 @@
     }
 }
 
+/* ================ RESPONSIVE ================ */
 @media (max-width: 1024px) {
     .footer {
         height: auto;
-        padding: 10rem 5vw 5rem;
+        min-height: auto;
+        padding: 6rem 6vw 4rem;
+        flex-shrink: unset;
+        scroll-snap-align: none;
     }
 
     .footer-content {
         grid-template-columns: 1fr 1fr;
-        gap: 4rem;
+        gap: 3rem;
+        margin-bottom: 4rem;
+    }
+
+    .footer-heading {
+        margin-bottom: 2rem;
     }
 }
 
 @media (max-width: 768px) {
+    .footer {
+        padding: 4rem 5vw 3rem;
+    }
+
     .footer-content {
         grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .footer-brand-section {
+        max-width: 100%;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding-top: 2rem;
+    }
+
+    .footer-logo-name {
+        font-size: 1.2rem;
+    }
+
+    .footer-description {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-heading {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 3rem 4vw 2rem;
+    }
+
+    .footer-socials {
+        gap: 1rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.6rem;
     }
 }

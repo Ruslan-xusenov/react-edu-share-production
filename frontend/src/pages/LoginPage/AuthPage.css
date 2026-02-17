@@ -1,7 +1,7 @@
 /* Auth Page Styles */
 .auth-page {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     flex-shrink: 0;
     scroll-snap-align: start;
     display: flex;
@@ -9,6 +9,14 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
+    padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .auth-page {
+        scroll-snap-align: none;
+        height: auto;
+    }
 }
 
 .auth-background {

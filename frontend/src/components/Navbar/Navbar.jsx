@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaUser, FaSignOutAlt, FaBookReader, FaChalkboardTeacher, FaBars, FaTimes
@@ -14,6 +14,13 @@ const Navbar = () => {
     const [user, setUser] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileOpen(false);
+        setShowDropdown(false);
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -49,6 +56,7 @@ const Navbar = () => {
             setIsLoggedIn(false);
             setUser(null);
             setShowDropdown(false);
+            setIsMobileOpen(false);
             navigate('/');
         }
     };
@@ -66,9 +74,14 @@ const Navbar = () => {
                 EDUSHARE AI
             </Link>
 
-            <div className="navbar-nav">
+            <div className={`navbar-nav ${isMobileOpen ? 'mobile-open' : ''}`}>
                 {navLinks.map((link) => (
-                    <Link key={link.to} to={link.to} className="nav-link">
+                    <Link
+                        key={link.to}
+                        to={link.to}
+                        className="nav-link"
+                        onClick={() => setIsMobileOpen(false)}
+                    >
                         {link.label}
                     </Link>
                 ))}
@@ -134,6 +147,15 @@ const Navbar = () => {
                         <Link to="/signup" className="btn-nav-signup" style={{ border: '1px solid #fff', padding: '0.5rem 1rem' }}>INITIALIZE</Link>
                     </div>
                 )}
+
+                {/* Hamburger Button */}
+                <button
+                    className="hamburger-btn"
+                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                    aria-label="Toggle navigation"
+                >
+                    {isMobileOpen ? <FaTimes /> : <FaBars />}
+                </button>
             </div>
         </nav>
     );

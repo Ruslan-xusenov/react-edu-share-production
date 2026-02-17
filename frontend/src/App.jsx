@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
@@ -14,7 +14,9 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import MyLearningPage from './pages/MyLearningPage/MyLearningPage';
 import CreateLessonPage from './pages/CreateLessonPage/CreateLessonPage';
 import CertificatePage from './pages/CertificatePage/CertificatePage';
+import { AnimatePresence, motion } from 'framer-motion';
 import apiClient, { API_ENDPOINTS } from './config/api';
+import SplashScreen from './components/SplashScreen/SplashScreen';
 import './App.css';
 
 // Google OAuth callback handler component
@@ -58,7 +60,23 @@ function AuthCallbackHandler() {
   return null;
 }
 
+const PageWrapper = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -20 }}
+    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    style={{ width: '100%' }}
+  >
+    {children}
+  </motion.div>
+);
+
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const handleSplashComplete = useCallback(() => setShowSplash(false), []);
+  const location = useLocation();
+
   useEffect(() => {
     const cursor = document.querySelector('.custom-cursor');
     const follower = document.querySelector('.custom-cursor-follower');
@@ -79,6 +97,9 @@ function App() {
   useEffect(() => {
     let isScrolling = false;
     const handleWheel = (e) => {
+      // Disable horizontal scroll conversion on mobile/tablet
+      if (window.innerWidth <= 1024) return;
+
       const container = document.querySelector('.main-content');
       if (!container || isScrolling) return;
 
@@ -141,38 +162,40 @@ function App() {
 
   return (
     <HelmetProvider>
-      <Router>
-        <ScrollReset />
-        <AuthCallbackHandler />
-        <div className="app">
-          <div className="custom-cursor"></div>
-          <div className="custom-cursor-follower"></div>
-          <div className="scroll-progress"></div>
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/courses" element={<CoursesPage />} />
-              <Route path="/courses/:id" element={<CourseDetailPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/leaderboard" element={<LeaderboardPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/my-learning" element={<MyLearningPage />} />
-              <Route path="/create-lesson" element={<CreateLessonPage />} />
-              <Route path="/certificate/:id" element={<CertificatePage />} />
+      <ScrollReset />
+      <AuthCallbackHandler />
+      <div className="app">
+        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+        <div className="custom-cursor"></div>
+        <div className="custom-cursor-follower"></div>
+        <div className="scroll-progress"></div>
+        <Navbar />
+        <main className="main-content">
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
+              <Route path="/courses" element={<PageWrapper><CoursesPage /></PageWrapper>} />
+              <Route path="/courses/:id" element={<PageWrapper><CourseDetailPage /></PageWrapper>} />
+              <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+              <Route path="/login" element={<PageWrapper><LoginPage /></PageWrapper>} />
+              <Route path="/signup" element={<PageWrapper><SignupPage /></PageWrapper>} />
+              <Route path="/leaderboard" element={<PageWrapper><LeaderboardPage /></PageWrapper>} />
+              <Route path="/profile" element={<PageWrapper><ProfilePage /></PageWrapper>} />
+              <Route path="/my-learning" element={<PageWrapper><MyLearningPage /></PageWrapper>} />
+              <Route path="/create-lesson" element={<PageWrapper><CreateLessonPage /></PageWrapper>} />
+              <Route path="/certificate/:id" element={<PageWrapper><CertificatePage /></PageWrapper>} />
               <Route path="*" element={
-                <section className="horizontal-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                  <h1>404</h1>
-                  <p>Sahifa topilmadi</p>
-                </section>
+                <PageWrapper>
+                  <section className="horizontal-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                    <h1>404</h1>
+                    <p>Sahifa topilmadi</p>
+                  </section>
+                </PageWrapper>
               } />
             </Routes>
-            <Footer />
-          </main>
-        </div>
-      </Router>
+          </AnimatePresence>
+        </main>
+      </div>
     </HelmetProvider>
   );
 }

@@ -403,9 +403,56 @@ body.dark-mode .video-mode-selector button.active {
     animation: fadeInSlide 0.4s ease-out;
 }
 
-@media (max-width: 640px) {
+/* ================ RESPONSIVE ================ */
+@media (max-width: 1024px) {
+    .create-lesson-page {
+        height: auto;
+        min-height: 100vh;
+        scroll-snap-align: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-lesson-page {
+        padding: 80px 4vw;
+    }
+
+    .create-lesson-header {
+        margin-bottom: 2.5rem;
+    }
+
     .create-lesson-header h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
+    }
+
+    .create-lesson-header p {
+        font-size: 1rem;
+    }
+
+    .create-lesson-card {
+        padding: 2rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .create-lesson-page {
+        padding: 70px 3vw;
+    }
+
+    .create-lesson-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .create-lesson-header .header-icon {
+        font-size: 2rem;
     }
 
     .create-lesson-card {
@@ -415,5 +462,26 @@ body.dark-mode .video-mode-selector button.active {
     .form-row,
     .options-grid {
         grid-template-columns: 1fr;
+    }
+
+    .file-upload-box label {
+        padding: 1.5rem;
+    }
+
+    .video-mode-selector button {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+
+    .btn-submit {
+        font-size: 1rem;
+    }
+
+    .question-item-card {
+        padding: 1rem;
+    }
+
+    .inline-add-form {
+        flex-direction: column;
     }
 }

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { FaTrophy, FaMedal, FaStar, FaUser } from 'react-icons/fa';
 import apiClient, { API_ENDPOINTS } from '../../config/api';
+import Footer from '../../components/Footer/Footer';
 import './LeaderboardPage.css';
 
 const LeaderboardPage = () => {
@@ -85,6 +86,11 @@ const LeaderboardPage = () => {
                         ))}
                     </div>
                 )}
+            </section>
+
+            {/* FOOTER - Final Section */}
+            <section className="horizontal-section" style={{ height: 'auto', minHeight: '100vh', display: 'flex', alignItems: 'flex-end', width: '100vw' }}>
+                <Footer />
             </section>
         </div>
     );

@@ -297,19 +297,6 @@
     }
 }
 
-@media (max-width: 1050px) {
-    .certificate-paper {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1.41/1;
-        /* A4 Ratio */
-    }
-
-    .cert-title {
-        font-size: 2.5rem;
-    }
-}
-
 .spinner {
     width: 40px;
     height: 40px;
@@ -322,5 +309,144 @@
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* ================ RESPONSIVE ================ */
+@media (max-width: 1050px) {
+    .certificate-page-container {
+        scroll-snap-align: none;
+    }
+
+    .certificate-paper {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1.41/1;
+    }
+
+    .cert-title {
+        font-size: 2rem;
+        letter-spacing: 0.3em;
+    }
+
+    .recipient-name {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .certificate-page-container {
+        padding: 5rem 1rem;
+    }
+
+    .cert-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .cert-inner-border {
+        padding: 30px;
+    }
+
+    .cert-title {
+        font-size: 1.5rem;
+        letter-spacing: 0.2em;
+    }
+
+    .cert-intro {
+        font-size: 0.7rem;
+    }
+
+    .recipient-name {
+        font-size: 1.8rem;
+        letter-spacing: 0.05em;
+    }
+
+    .cert-description {
+        font-size: 0.85rem;
+    }
+
+    .cert-details {
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .cert-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .signature {
+        width: 160px;
+    }
+
+    .cert-stamp {
+        width: 80px;
+        height: 80px;
+        bottom: 30px;
+    }
+
+    .cert-stamp svg {
+        font-size: 2rem;
+    }
+
+    .cert-logo {
+        font-size: 0.8rem;
+        letter-spacing: 0.15em;
+    }
+
+    .award-icon {
+        font-size: 1.5rem;
+    }
+
+    .cert-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .certificate-page-container {
+        padding: 4rem 0.5rem;
+    }
+
+    .cert-inner-border {
+        padding: 20px;
+    }
+
+    .cert-title {
+        font-size: 1.2rem;
+        letter-spacing: 0.1em;
+    }
+
+    .recipient-name {
+        font-size: 1.3rem;
+    }
+
+    .cert-description {
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .cert-details {
+        gap: 1rem;
+    }
+
+    .detail-item .label {
+        font-size: 0.5rem;
+    }
+
+    .detail-item .value {
+        font-size: 0.7rem;
+    }
+
+    .cert-category-path {
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
     }
 }

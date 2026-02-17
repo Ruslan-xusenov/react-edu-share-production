@@ -20,7 +20,12 @@
     position: relative;
     scroll-snap-align: start;
     overflow: hidden;
-    background: #000;
+    background: radial-gradient(circle at center, #0a0a1a 0%, #030308 100%);
+}
+
+/* Hero needs extra top padding because of fixed navbar */
+.hero-section {
+    padding-top: 100px;
 }
 
 /* Hero Section - Voxel Glow */
@@ -114,20 +119,23 @@
 }
 
 .category-card {
-    background: #050505;
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
     padding: 3rem;
     height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: all 0.5s ease;
+    transition: all 0.6s var(--transition);
 }
 
 .category-card:hover {
-    border-color: #fff;
-    background: #0a0a0a;
-    transform: translateY(-10px);
+    border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-15px);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
 }
 
 .category-icon {
@@ -153,42 +161,55 @@
 
 .course-card {
     width: 500px;
-    background: #000;
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 32px;
     overflow: hidden;
-    transition: all 0.4s ease;
+    transition: all 0.7s var(--transition);
+    position: relative;
+    cursor: pointer;
 }
 
 .course-card:hover {
     border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.7);
 }
 
 .course-image-wrapper {
     aspect-ratio: 21/9;
-    background: #0a0a0a;
+    background: #050505;
+    overflow: hidden;
 }
 
 .course-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.6;
-    transition: opacity 0.4s ease;
+    opacity: 0.5;
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: grayscale(0.5);
 }
 
 .course-card:hover .course-image {
     opacity: 1;
-}
-
-.course-info {
-    padding: 2.5rem;
+    transform: scale(1.1);
+    filter: grayscale(0);
 }
 
 .course-title {
     font-family: var(--font-heading);
     font-size: 1.2rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     margin-bottom: 2rem;
+    transition: color 0.3s ease;
+}
+
+.course-card:hover .course-title {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
 }
 
 /* CTA Section */
@@ -202,4 +223,198 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+}
+
+/* ================ RESPONSIVE ================ */
+
+@media (max-width: 1024px) {
+    .homepage-horizontal {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .hero-section,
+    .stats-section,
+    .categories-section,
+    .courses-section,
+    .cta-section {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        flex-shrink: unset;
+        scroll-snap-align: none;
+        padding: 6rem 6vw 4rem;
+    }
+
+    .hero-section {
+        padding-top: 10rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        margin-bottom: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
+    }
+
+    .stats-grid {
+        gap: 6vw;
+    }
+
+    .stat-number {
+        font-size: 5rem;
+    }
+
+    .categories-container h2 {
+        margin-bottom: 3rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .category-card {
+        height: 280px;
+        padding: 2rem;
+    }
+
+    .category-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .courses-grid-horizontal {
+        flex-direction: column;
+    }
+
+    .course-card {
+        width: 100%;
+    }
+
+    .cta-content h2 {
+        font-size: clamp(2rem, 8vw, 5rem);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .hero-section,
+    .stats-section,
+    .categories-section,
+    .courses-section,
+    .cta-section {
+        padding: 4rem 5vw 3rem;
+        min-height: auto;
+    }
+
+    .hero-section {
+        padding-top: 8rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 7vw, 3rem);
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        flex-direction: column;
+        gap: 3rem;
+        align-items: center;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 4rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+    }
+
+    .categories-grid,
+    .courses-grid-horizontal {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        gap: 1.5rem;
+        padding: 1.5rem 5vw !important;
+        width: 100vw;
+        margin-left: -5vw;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .categories-grid::-webkit-scrollbar,
+    .courses-grid-horizontal::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-card,
+    .course-card {
+        width: 80vw !important;
+        max-width: 320px;
+        flex-shrink: 0;
+        scroll-snap-align: center;
+        margin: 0;
+        height: auto;
+    }
+
+    .category-card {
+        height: 300px;
+    }
+
+    .course-info {
+        padding: 1.5rem;
+    }
+
+    .course-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-section,
+    .stats-section,
+    .categories-section,
+    .courses-section,
+    .cta-section {
+        padding: 3rem 4vw 2rem;
+    }
+
+    .hero-section {
+        padding-top: 7rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+    }
+
+    .category-card {
+        width: 75vw !important;
+        height: 240px;
+    }
+
+    .course-card {
+        width: 75vw !important;
+    }
 }

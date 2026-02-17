@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { FaCode, FaCalculator, FaFlask, FaLanguage } from 'react-icons/fa';
 import apiClient, { API_ENDPOINTS } from '../../config/api';
+import Footer from '../../components/Footer/Footer';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -27,6 +28,33 @@ const HomePage = () => {
         };
         fetchHomeData();
     }, []);
+
+    const coursesScrollRef = useRef(null);
+
+    useEffect(() => {
+        const scrollContainer = coursesScrollRef.current;
+        if (!scrollContainer) return;
+
+        let scrollInterval;
+        const startAutoScroll = () => {
+            scrollInterval = setInterval(() => {
+                const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+                const maxScroll = scrollWidth - clientWidth;
+
+                if (scrollLeft >= maxScroll - 5) {
+                    scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    scrollContainer.scrollBy({ left: clientWidth * 0.8, behavior: 'smooth' });
+                }
+            }, 5000); // 5 seconds for courses
+        };
+
+        if (window.innerWidth <= 1024) {
+            startAutoScroll();
+        }
+
+        return () => clearInterval(scrollInterval);
+    }, [featuredCourses]);
 
     const categories = [
         { name: 'Develop', icon: <FaCode />, color: 'var(--accent-cyan)' },
@@ -124,7 +152,7 @@ const HomePage = () => {
             <section className="courses-section">
                 <div className="courses-container">
                     <h2>SELECTED <br /> MODULES.</h2>
-                    <div className="courses-grid-horizontal">
+                    <div className="courses-grid-horizontal" ref={coursesScrollRef}>
                         {featuredCourses.length > 0 ? featuredCourses.map((course, i) => (
                             <motion.div
                                 key={course.id}
@@ -166,6 +194,11 @@ const HomePage = () => {
                         <Link to="/signup" className="btn btn-primary">CREATE CORE ACCOUNT</Link>
                     </div>
                 </div>
+            </section>
+
+            {/* FOOTER - Final Section */}
+            <section className="horizontal-section" style={{ height: 'auto', minHeight: '100vh', display: 'flex', alignItems: 'flex-end', width: '100vw' }}>
+                <Footer />
             </section>
         </div>
     );

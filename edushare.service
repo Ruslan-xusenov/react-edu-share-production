@@ -6,12 +6,12 @@ After=network.target
 Type=notify
 User=www-data
 Group=www-data
-WorkingDirectory=/home/user/edushare
-Environment="PATH=/home/user/edushare/venv/bin"
+WorkingDirectory=/var/www/edushare
+Environment="PATH=/var/www/edushare/venv/bin"
 Environment="DJANGO_SETTINGS_MODULE=edushare_project.settings_production"
-EnvironmentFile=/home/user/edushare/.env.production
-ExecStart=/home/user/edushare/venv/bin/gunicorn \
-    --config /home/user/edushare/gunicorn_config.py \
+EnvironmentFile=/var/www/edushare/.env.production
+ExecStart=/var/www/edushare/venv/bin/gunicorn \
+    --config /var/www/edushare/gunicorn_config.py \
     edushare_project.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed

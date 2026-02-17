@@ -184,3 +184,53 @@
     color: var(--primary-400);
     font-weight: bold;
 }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .video-controls {
+        opacity: 1;
+        /* Always show controls on mobile for easier access */
+        padding: 0.75rem;
+    }
+
+    .control-btn {
+        font-size: 1.5rem;
+        /* Larger buttons for touch */
+        padding: 0.5rem;
+    }
+
+    .progress-thumb {
+        opacity: 1;
+        width: 14px;
+        height: 14px;
+    }
+
+    .time-display {
+        font-size: 0.75rem;
+    }
+
+    .volume-container {
+        display: none;
+        /* Hide volume slider on mobile, use system controls */
+    }
+}
+
+@media (max-width: 480px) {
+    .controls-row {
+        gap: 0.25rem;
+    }
+
+    .controls-left,
+    .controls-right {
+        gap: 0.5rem;
+    }
+
+    .control-btn {
+        font-size: 1.3rem;
+    }
+
+    .time-display {
+        display: none;
+        /* Save space on very small screens */
+    }
+}

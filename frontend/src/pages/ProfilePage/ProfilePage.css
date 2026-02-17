@@ -274,19 +274,131 @@
     z-index: 2;
 }
 
+/* ================ RESPONSIVE ================ */
 @media (max-width: 1024px) {
+    .profile-page {
+        height: auto;
+        min-height: 100vh;
+        scroll-snap-align: none;
+    }
+
     .content-grid {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .profile-info-main {
         flex-direction: column;
         align-items: center;
         text-align: center;
+        padding: 0 2rem;
     }
 
     .profile-name-row {
         flex-direction: column;
         gap: 2rem;
+    }
+
+    .profile-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .profile-tabs {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-page {
+        padding: 80px 4vw;
+    }
+
+    .profile-cover {
+        height: 140px;
+        margin-bottom: -70px;
+        border-radius: 1rem;
+    }
+
+    .profile-avatar-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .edit-avatar-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .profile-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+    }
+
+    .profile-info-main {
+        gap: 1.5rem;
+        padding: 0;
+    }
+
+    .profile-stats {
+        gap: 1.5rem;
+    }
+
+    .stat strong {
+        font-size: 1.2rem;
+    }
+
+    .stat span {
+        font-size: 0.6rem;
+    }
+
+    .content-grid {
+        margin-top: 3rem;
+    }
+
+    .side-card {
+        padding: 1.5rem;
+    }
+
+    .courses-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .certificates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .certificate-card {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-page {
+        padding: 70px 3vw;
+    }
+
+    .profile-avatar-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-cover {
+        height: 100px;
+        margin-bottom: -50px;
+    }
+
+    .profile-tabs {
+        gap: 1rem;
+    }
+
+    .tab {
+        font-size: 0.6rem;
+        letter-spacing: 0.1rem;
+        padding: 0.5rem 0;
     }
 }

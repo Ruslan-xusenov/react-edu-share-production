@@ -1,35 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&family=Inter:wght@400;600&display=swap');
 
-/* � Opus AI Inspired - Premium Futurist Design System */
+/* 🫧 Modern Soft-Glass Design System */
 :root {
-  --bg-primary: #000000;
-  --bg-secondary: #050505;
+  --bg-primary: #030308;
+  --bg-secondary: #080812;
   --text-primary: #ffffff;
-  --text-secondary: #888888;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+
   --accent-cyan: #00f2fe;
-  --accent-pink: #ff0080;
+  --accent-pink: #ff00c1;
   --accent-purple: #7000ff;
-  --border: rgba(255, 255, 255, 0.1);
-  --transition: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  --font-heading: 'Michroma', sans-serif;
+  --accent-blue: #4facfe;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-blur: blur(25px);
+
+  --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  /* 🔌 Compatibility Mappings (Fixes missing text/backgrounds) */
-  --primary: var(--accent-cyan);
-  --primary-600: var(--accent-cyan);
-  --primary-50: rgba(0, 242, 254, 0.1);
-  --secondary: var(--accent-pink);
-  --background: var(--bg-primary);
-  --surface: var(--bg-secondary);
-  --dark-surface: #0a0a0a;
-  --gray-50: rgba(255, 255, 255, 0.02);
-  --gray-100: rgba(255, 255, 255, 0.05);
-  --gray-200: rgba(255, 255, 255, 0.1);
-  --gray-300: rgba(255, 255, 255, 0.2);
-  --gray-500: #888;
-  --gray-600: #666;
-  --gray-700: #444;
-  /* Note: We should ideally avoid dark-on-dark, but mapping these helps */
+  --radius-xl: 32px;
+  --radius-lg: 20px;
+  --radius-md: 12px;
+
+  --transition: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  --glow-soft: 0 0 30px rgba(0, 242, 254, 0.15);
 }
 
 ::selection {
@@ -41,17 +36,23 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none !important;
+}
+
+/* Custom cursor only on desktop */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
 html,
 body {
-  overflow: hidden;
   height: 100vh;
   width: 100vw;
   font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  overflow: hidden;
 }
 
 #root,
@@ -84,7 +85,6 @@ body {
   scroll-snap-align: start;
   overflow-x: hidden;
   overflow-y: auto;
-  /* Allow vertical scroll within sections if needed */
   position: relative;
 }
 
@@ -114,24 +114,12 @@ h2 {
   text-transform: uppercase;
 }
 
-/* Custom Cursor - Opus Multi-Neon Style */
+/* Custom Cursor - Opus Multi-Neon Style (Desktop only) */
 .custom-cursor {
   width: 12px;
   height: 12px;
   background: conic-gradient(from 0deg,
-      #00f2fe,
-      /* Blue */
-      #7000ff,
-      /* Purple */
-      #ff0080,
-      /* Pink */
-      #ff0000,
-      /* Red */
-      #00ff00,
-      /* Green */
-      #00f2fe
-      /* back to Blue */
-    );
+      #00f2fe, #7000ff, #ff0080, #ff0000, #00ff00, #00f2fe);
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
@@ -243,5 +231,101 @@ input:-webkit-autofill:focus {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* ================ MOBILE RESPONSIVE ================ */
+
+/* Hide custom cursor on touch devices */
+@media (hover: none),
+(pointer: coarse) {
+
+  .custom-cursor,
+  .custom-cursor-follower {
+    display: none !important;
+  }
+}
+
+/* Tablet and below: switch to vertical layout */
+@media (max-width: 1024px) {
+
+  html,
+  body {
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  #root,
+  .app {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+
+  .main-content {
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    scroll-snap-type: none;
+    height: auto !important;
+    flex: none;
+  }
+
+  .horizontal-section {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    flex-shrink: unset;
+    scroll-snap-align: none;
+  }
+
+  .horizontal-page {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
+
+  .scroll-progress {
+    display: none;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 4rem);
+  }
+
+  h2 {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+  }
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  h1 {
+    font-size: clamp(1.6rem, 6vw, 2.5rem);
+    letter-spacing: 0.05em;
+  }
+
+  h2 {
+    font-size: clamp(1rem, 4vw, 1.6rem);
+    letter-spacing: 0.02em;
+  }
+
+  .btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  h1 {
+    font-size: clamp(1.3rem, 5.5vw, 2rem);
   }
 }

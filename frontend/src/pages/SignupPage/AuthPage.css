@@ -7,6 +7,16 @@
     position: relative;
     overflow: hidden;
     padding: 2rem;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 100vw;
+}
+
+@media (max-width: 1024px) {
+    .auth-page {
+        scroll-snap-align: none;
+        height: auto;
+    }
 }
 
 .auth-background {

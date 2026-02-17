@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -7,6 +7,7 @@ import {
     FaChartLine, FaAward, FaMedal
 } from 'react-icons/fa';
 import apiClient, { API_ENDPOINTS } from '../../config/api';
+import Footer from '../../components/Footer/Footer';
 import './AboutPage.css';
 
 const AboutPage = () => {
@@ -46,6 +47,33 @@ const AboutPage = () => {
         { name: 'Amir Karimov', role: 'SYSTEMS LEAD', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&fit=crop', bio: 'Specialist in scalable knowledge systems.' },
         { name: 'Dilnoza Rahimova', role: 'COMMUNITY NODE', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&fit=crop', bio: 'Growing the decentralized learner network.' }
     ];
+
+    const teamScrollRef = useRef(null);
+
+    useEffect(() => {
+        const scrollContainer = teamScrollRef.current;
+        if (!scrollContainer) return;
+
+        let scrollInterval;
+        const startAutoScroll = () => {
+            scrollInterval = setInterval(() => {
+                const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+                const maxScroll = scrollWidth - clientWidth;
+
+                if (scrollLeft >= maxScroll - 5) {
+                    scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    scrollContainer.scrollBy({ left: clientWidth * 0.8, behavior: 'smooth' });
+                }
+            }, 4000);
+        };
+
+        if (window.innerWidth <= 1024) {
+            startAutoScroll();
+        }
+
+        return () => clearInterval(scrollInterval);
+    }, []);
 
     return (
         <div className="about-page">
@@ -104,7 +132,7 @@ const AboutPage = () => {
             </section>
 
             <section className="team-section">
-                <div className="team-grid">
+                <div className="team-grid" ref={teamScrollRef}>
                     {team.map((m, i) => (
                         <div key={i} className="team-card">
                             <div className="team-image"><img src={m.image} alt={m.name} /></div>
@@ -117,7 +145,6 @@ const AboutPage = () => {
                     ))}
                 </div>
             </section>
-
             <section className="about-cta">
                 <div className="cta-content" style={{ textAlign: 'center' }}>
                     <h2>JOIN THE <br /> <span className="cta-highlight">COLLECTIVE.</span></h2>
@@ -125,6 +152,11 @@ const AboutPage = () => {
                         <a href="/signup" className="btn btn-primary">INITIALIZE ACCOUNT</a>
                     </div>
                 </div>
+            </section>
+
+            {/* FOOTER - Final Section */}
+            <section className="horizontal-section" style={{ height: 'auto', minHeight: '100vh', display: 'flex', alignItems: 'flex-end', width: '100vw' }}>
+                <Footer />
             </section>
         </div>
     );

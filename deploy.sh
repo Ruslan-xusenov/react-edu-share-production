@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_NAME="edushare"
-PROJECT_DIR="/home/user/edushare"
+PROJECT_DIR="/var/www/edushare"
 VENV_DIR="$PROJECT_DIR/venv"
 USER="www-data"
 GROUP="www-data"
@@ -94,34 +94,47 @@ pip install -r requirements.txt
 pip install gunicorn psycopg2-binary django-redis
 print_status "Virtual environment ready"
 
-# 6. Django setup
+# 6. Frontend build
 echo ""
-echo "6. Django setup..."
-python manage.py collectstatic --noinput
+echo "6. Building frontend..."
+cd $PROJECT_DIR/frontend
+# Install npm if not present (deploy.sh handles this usually, but let's be safe)
+if ! command -v npm &> /dev/null; then
+    apt-get install -y nodejs npm
+fi
+npm install
+npm run build
+print_status "Frontend built"
+
+# 7. Django setup
+echo ""
+echo "7. Django setup..."
+cd $PROJECT_DIR
+python manage.py collectstatic --noinput --settings=edushare_project.settings_production
 python manage.py migrate --settings=edushare_project.settings_production
 print_status "Django configured"
 
-# 7. Set permissions
+# 8. Set permissions
 echo ""
-echo "7. Setting permissions..."
+echo "8. Setting permissions..."
 chown -R $USER:$GROUP $PROJECT_DIR
 chmod -R 755 $PROJECT_DIR
 chown -R $USER:$GROUP /var/log/edushare
 chown -R $USER:$GROUP /var/run/edushare
 print_status "Permissions set"
 
-# 8. Setup Systemd service
+# 9. Setup Systemd service
 echo ""
-echo "8. Setting up systemd service..."
+echo "9. Setting up systemd service..."
 cp $PROJECT_DIR/edushare.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable edushare
 systemctl start edushare
 print_status "Systemd service configured"
 
-# 9. Setup Nginx
+# 10. Setup Nginx
 echo ""
-echo "9. Setting up Nginx..."
+echo "10. Setting up Nginx..."
 cp $PROJECT_DIR/nginx_config.conf /etc/nginx/sites-available/edushare
 ln -sf /etc/nginx/sites-available/edushare /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
@@ -130,41 +143,43 @@ systemctl restart nginx
 systemctl enable nginx
 print_status "Nginx configured"
 
-# 10. Setup SSL with Let's Encrypt
+# 11. Setup SSL with Let's Encrypt
 echo ""
-echo "10. Setting up SSL certificate..."
+echo "11. Setting up SSL certificate..."
 print_warning "Make sure your domain points to this server!"
-read -p "Enter your domain (e.g., yourdomain.com): " DOMAIN
-read -p "Enter your email: " EMAIL
+# read -p "Enter your domain (e.g., yourdomain.com): " DOMAIN
+# read -p "Enter your email: " EMAIL
+DOMAIN="edushare.uz"
+EMAIL="admin@edushare.uz"
 
 certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL
 print_status "SSL certificate installed"
 
-# 11. Setup firewall
+# 12. Setup firewall
 echo ""
-echo "11. Configuring firewall..."
+echo "12. Configuring firewall..."
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
 ufw --force enable
 print_status "Firewall configured"
 
-# 12. Setup automatic SSL renewal
+# 13. Setup automatic SSL renewal
 echo ""
-echo "12. Setting up automatic SSL renewal..."
+echo "13. Setting up automatic SSL renewal..."
 (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'") | crontab -
 print_status "SSL auto-renewal configured"
 
-# 13. Setup Redis
+# 14. Setup Redis
 echo ""
-echo "13. Configuring Redis..."
+echo "14. Configuring Redis..."
 systemctl enable redis-server
 systemctl start redis-server
 print_status "Redis configured"
 
-# 14. Create superuser
+# 15. Create superuser
 echo ""
-echo "14. Creating Django superuser..."
+echo "15. Creating Django superuser..."
 print_warning "Enter superuser credentials:"
 cd $PROJECT_DIR
 source venv/bin/activate
