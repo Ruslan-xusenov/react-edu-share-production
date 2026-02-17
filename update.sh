@@ -28,7 +28,7 @@ pip install -r requirements.txt
 # 3. Frontend'ni qayta yig'ish (agar o'zgarish bo'lsa)
 echo "3. Frontend yig'ilmoqda..."
 cd frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 

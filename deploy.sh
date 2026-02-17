@@ -102,7 +102,7 @@ cd $PROJECT_DIR/frontend
 if ! command -v npm &> /dev/null; then
     apt-get install -y nodejs npm
 fi
-npm install
+npm install --legacy-peer-deps
 npm run build
 print_status "Frontend built"
 
