@@ -472,7 +472,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.8rem;
+    min-width: 0;
 }
 
 .input-wrapper input {
@@ -486,7 +487,7 @@
 
 .input-wrapper input:focus {
     outline: none;
-    border-bottom-color: var(--text-primary);
+    border-bottom-color: var(--primary-600);
 }
 
 .input-wrapper button {
@@ -553,13 +554,22 @@
     }
 
     .watch-content .content-tabs {
-        gap: 1rem;
+        gap: 0.5rem;
         overflow-x: auto;
+        padding-bottom: 2px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .watch-content .content-tabs::-webkit-scrollbar {
+        display: none;
     }
 
     .watch-content .tab {
         white-space: nowrap;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+        padding: 0.5rem 1rem;
+        flex-shrink: 0;
     }
 
     .instructor-card {
@@ -572,6 +582,12 @@
 
     .comment-form {
         gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .comment-form .user-avatar {
+        width: 32px;
+        height: 32px;
     }
 
     .comment-actions-yt {
