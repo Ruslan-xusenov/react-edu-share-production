@@ -44,13 +44,16 @@ const CommentItem = ({ comment, depth = 0, rootId = null, onLike, onDislike, onR
     };
 
     const timeAgo = (date) => {
-        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+        if (!date) return 'hozir';
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return 'hozir';
+        const seconds = Math.floor((new Date() - d) / 1000);
         if (seconds < 60) return 'hozir';
         const minutes = Math.floor(seconds / 60);
         if (minutes < 60) return `${minutes} daqiqa oldin`;
         const hours = Math.floor(minutes / 60);
         if (hours < 24) return `${hours} soat oldin`;
-        return new Date(date).toLocaleDateString();
+        return d.toLocaleDateString();
     };
 
     return (
@@ -211,17 +214,24 @@ const CourseDetailPage = () => {
 
         setSubmittingComment(true);
         try {
+            console.log("Posting comment to:", API_ENDPOINTS.LESSON_ADD_COMMENT(id));
             const res = await apiClient.post(API_ENDPOINTS.LESSON_ADD_COMMENT(id), {
                 content: newComment
             });
+            console.log("Comment post response:", res.data);
+
+            // Handle different possible response structures
+            const postedComment = res.data.id ? res.data : (res.data.comment || res.data);
+
             setCourse(prev => ({
                 ...prev,
-                comments: [res.data, ...(prev.comments || [])]
+                comments: [postedComment, ...(prev.comments || [])]
             }));
             setNewComment('');
         } catch (error) {
             console.error("Error posting comment:", error);
-            alert("Izoh yuborish muvaffaqiyatsiz. Iltimos, qayta urinib ko'ring.");
+            const errorMsg = error.response?.data?.message || error.response?.data?.detail || "Izoh yuborish muvaffaqiyatsiz.";
+            alert(errorMsg);
         } finally {
             setSubmittingComment(false);
         }
@@ -657,7 +667,7 @@ const CourseDetailPage = () => {
                                                 <img
                                                     src={`https://ui-avatars.com/api/?name=User&background=random`}
                                                     alt="User"
-                                                    className="user-avatar"
+                                                    className="comment-user-avatar"
                                                 />
                                                 <div className="input-wrapper">
                                                     <input

@@ -462,10 +462,12 @@
     margin-bottom: 2rem;
 }
 
-.user-avatar {
+.comment-user-avatar {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border);
 }
 
 .input-wrapper {
@@ -585,9 +587,10 @@
         align-items: flex-start;
     }
 
-    .comment-form .user-avatar {
+    .comment-form .comment-user-avatar {
         width: 32px;
         height: 32px;
+        border-radius: 6px;
     }
 
     .comment-actions-yt {
@@ -685,7 +688,7 @@
 .comment-avatar img {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 8px;
     object-fit: cover;
     z-index: 2;
     background: white;

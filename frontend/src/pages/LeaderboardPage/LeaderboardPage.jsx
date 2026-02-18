@@ -71,13 +71,13 @@ const LeaderboardPage = () => {
                                 <span className="rank">0{index + 1}</span>
                                 <div className="user">
                                     {leader.avatar ? (
-                                        <img src={leader.avatar} alt={leader.full_name} className="user-avatar" />
+                                        <img src={leader.avatar} alt={leader.full_name} className="leader-avatar" />
                                     ) : (
                                         <div className="avatar-placeholder">
                                             <FaUser />
                                         </div>
                                     )}
-                                    <span className="user-name">{leader.full_name || leader.username}</span>
+                                    <span className="leader-name">{leader.full_name || leader.username}</span>
                                 </div>
                                 <div className="points">
                                     <FaStar /> {leader.points}

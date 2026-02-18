@@ -6,7 +6,7 @@
     left: 0;
     width: 100%;
     z-index: 10000;
-    padding: 1.5rem 5vw;
+    padding: 0 5vw;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -82,20 +82,31 @@
     background: transparent;
     border: none;
     color: #fff;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.65rem;
     cursor: pointer;
+    padding: 0.5rem;
 }
 
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 0;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+.user-name {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    font-size: 0.75rem;
+    color: #fff;
+}
+
+.navbar-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     object-fit: cover;
     background: #000;
+    transition: transform 0.3s ease;
+}
+
+.user-menu-btn:hover .navbar-avatar {
+    transform: scale(1.05);
+    border-color: var(--accent-cyan);
 }
 
 /* Dropdown styling */
@@ -323,9 +334,9 @@
         display: none;
     }
 
-    .user-avatar {
-        width: 36px;
-        height: 36px;
+    .navbar-avatar {
+        width: 34px;
+        height: 34px;
     }
 
     /* Dropdown on mobile */

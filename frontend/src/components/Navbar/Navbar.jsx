@@ -104,7 +104,7 @@ const Navbar = () => {
                                 <img
                                     src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.full_name || 'U'}&background=000&color=fff&size=64`}
                                     alt={user?.full_name}
-                                    className="user-avatar"
+                                    className="navbar-avatar"
                                 />
                                 <span className="user-name">{user?.full_name?.split(' ')[0] || 'PROFILE'}</span>
                             </button>
