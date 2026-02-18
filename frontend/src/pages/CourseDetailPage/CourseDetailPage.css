@@ -119,7 +119,8 @@
 .instructor-mini img {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
 .instructor-mini h4 {
@@ -241,7 +242,7 @@
 .instructor-avatar {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    border-radius: 8px;
     object-fit: cover;
     border: 1px solid var(--border);
 }
@@ -458,16 +459,20 @@
 
 .comment-form {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .comment-user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
     object-fit: cover;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #1a1a1a;
+    flex-shrink: 0;
 }
 
 .input-wrapper {
@@ -481,15 +486,22 @@
 .input-wrapper input {
     width: 100%;
     border: none;
-    border-bottom: 1px solid var(--gray-300);
-    padding: 0.5rem 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 0;
     background: transparent;
-    transition: border-color 0.2s;
+    color: #ffffff !important;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .input-wrapper input:focus {
     outline: none;
-    border-bottom-color: var(--primary-600);
+    border-bottom-color: var(--accent-cyan);
 }
 
 .input-wrapper button {
@@ -688,7 +700,7 @@
 .comment-avatar img {
     width: 40px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: 4px;
     object-fit: cover;
     z-index: 2;
     background: white;
