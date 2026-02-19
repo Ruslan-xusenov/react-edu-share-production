@@ -110,4 +110,5 @@ export const API_ENDPOINTS = {
     QUIZ_QUESTIONS: '/quiz-questions/',
     LESSON_QUIZ: (id) => `/lessons/${id}/quiz/`,
     LESSON_QUIZ_SUBMIT: (id) => `/lessons/${id}/submit_quiz/`,
+    AI_CHAT: '/ai-chat/',
 };

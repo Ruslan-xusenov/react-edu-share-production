@@ -1,33 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import apiClient, { API_ENDPOINTS } from '../../config/api';
 import './AIChatBot.css';
-
-const OPENROUTER_API_KEY = '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';
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-
-const SYSTEM_PROMPT = `Sen EduShare AI — faqat ta'lim uchun yaratilgan yordamchi.
-
-🚨 MUHIM QOIDA: Sen FAQAT maktab va universitetdagi FANLAR (matematika, fizika, kimyo, biologiya, tarix, geografiya, ingliz tili, adabiyot) bo'yicha NAZARIY tushuntirish berasan.
-
-Sen HECH QACHON quyidagilarni qilmasliging kerak:
-- Kod yozib berish (Python, JavaScript, HTML yoki boshqa tilda)
-- Bot, dastur, sayt, ilova yaratishga yordam berish
-- Retsept, sport, ob-havo, film, musiqa, o'yin haqida gapirish
-- Siyosat, din, shaxsiy maslahat berish
-- Telegram bot, Discord bot yoki boshqa texnik loyiha qilish
-- Hech qanday amaliy kod, script yoki texnik yechim berish
-
-Sen FAQAT:
-- Maktab fanlari bo'yicha nazariy savollarni tushuntirasan (masalan: "Nyuton qonunlari nima?", "Fotosintez nima?", "Ikkinchi jahon urushi qachon bo'lgan?")
-- Matematika formulalari va misollarni yechishga yordam berasan
-- Ingliz tili grammatikasi va so'z boyligini o'rgatasan
-- EduShare platformasidan foydalanish (kurslar, darslar, sertifikatlar) haqida ma'lumot berasan
-- Imtihonga tayyorgarlik bo'yicha maslahat berasan
-
-Agar foydalanuvchi kod yozib berish, bot yasash, dastur qilish yoki ta'limga aloqasi bo'lmagan ISTALGAN narsa so'rasa, DOIM aynan shu javobni ber:
-"📚 Kechirasiz, men faqat ta'lim fanlari (matematika, fizika, kimyo, tarix, ingliz tili va h.k.) bo'yicha nazariy savollarga javob beraman. Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. Iltimos, fan bo'yicha savol bering!"
-
-Bu qoidani HECH QACHON buzma. Hech qanday istisno yo'q.`;
 
 const REFUSAL_MESSAGE = '📚 Kechirasiz, men faqat ta\'lim fanlari (matematika, fizika, kimyo, tarix, ingliz tili va h.k.) bo\'yicha nazariy savollarga javob beraman. Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. Iltimos, fan bo\'yicha savol bering!';
 
@@ -173,31 +147,14 @@ const AIChatBot = () => {
         setIsLoading(true);
 
         try {
-            const apiMessages = [
-                { role: 'system', content: SYSTEM_PROMPT },
-                ...updatedMessages.map(m => ({ role: m.role, content: m.content }))
-            ];
+            const apiMessages = updatedMessages.map(m => ({ role: m.role, content: m.content }));
 
-            const response = await fetch(OPENROUTER_URL, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                    'Content-Type': 'application/json',
-                    'HTTP-Referer': 'https://edushare.uz',
-                    'X-Title': 'EduShare AI',
-                },
-                body: JSON.stringify({
-                    model: 'openai/gpt-4.1-nano',
-                    messages: apiMessages,
-                    max_tokens: 1024,
-                    temperature: 0.7,
-                }),
+            const response = await apiClient.post(API_ENDPOINTS.AI_CHAT, {
+                messages: apiMessages,
             });
 
-            const data = await response.json();
-
-            if (data.choices && data.choices[0]?.message?.content) {
-                const aiContent = data.choices[0].message.content;
+            if (response.data?.status === 'success' && response.data?.content) {
+                const aiContent = response.data.content;
                 // Add placeholder message
                 const placeholderIndex = updatedMessages.length;
                 setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
@@ -215,7 +172,7 @@ const AIChatBot = () => {
             console.error('AI Chat Error:', error);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: '⚠️ Tarmoq xatoligi. Iltimos, internet aloqangizni tekshiring va qayta urinib ko\'ring.'
+                content: '⚠️ Tarmoq xatoligi. Iltimos, qayta urinib ko\'ring.'
             }]);
             setIsLoading(false);
         }
