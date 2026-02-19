@@ -5,72 +5,35 @@ import './AIChatBot.css';
 
 const REFUSAL_MESSAGE = '📚 Kechirasiz, men faqat ta\'lim fanlari (matematika, fizika, kimyo, tarix, ingliz tili va h.k.) bo\'yicha nazariy savollarga javob beraman. Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. Iltimos, fan bo\'yicha savol bering!';
 
-// Client-side filter: block non-educational topics BEFORE sending to API
+// Client-side filter: ONLY block messages with clearly non-educational keywords
+// All other messages pass through to the server where AI system prompt handles filtering
 const BLOCKED_KEYWORDS = [
     // Programming & code
-    'kod', 'code', 'script', 'program', 'dastur', 'bot', 'api', 'server',
-    'frontend', 'backend', 'database', 'deploy', 'github', 'terminal',
-    'function', 'class', 'import', 'install', 'npm', 'pip', 'framework',
-    'react', 'django', 'flask', 'node', 'web sayt', 'websayt', 'website',
-    'ilova', 'app', 'mobile', 'android', 'ios', 'telegram', 'discord',
-    'hack', 'crack', 'virus',
+    'kod yoz', 'code', 'script', 'programma yoz', 'dastur yoz', 'bot yoz',
+    'bot yasa', 'bot qil', 'api', 'server qur', 'frontend', 'backend',
+    'database', 'deploy', 'github', 'terminal', 'function', 'npm', 'pip',
+    'framework', 'react', 'django', 'flask', 'web sayt yasa', 'websayt',
+    'ilova yasa', 'mobile app', 'android app', 'ios app', 'telegram bot',
+    'discord bot', 'hack', 'crack', 'virus',
     // Entertainment
-    'film', 'kino', 'serial', 'anime', 'manga', 'o\'yin', 'game', 'gta',
-    'minecraft', 'fortnite', 'pubg', 'musiqa', 'qo\'shiq', 'music', 'song',
-    'futbol', 'sport', 'basketbol', 'chess',
+    'film tavsiya', 'kino tavsiya', 'serial tavsiya', 'anime', 'manga',
+    'o\'yin tavsiya', 'gta', 'minecraft', 'fortnite', 'pubg',
+    'qo\'shiq tavsiya', 'music tavsiya',
     // Non-educational
-    'ob-havo', 'weather', 'retsept', 'recipe', 'taom', 'ovqat', 'pishir',
-    'siyosat', 'politic', 'din', 'religio', 'bitcoin', 'crypto', 'valyuta',
-    'pul ishlash', 'million', 'boylik', 'sevgi', 'love', 'qiz', 'yigit',
-    'sog\'liq', 'health', 'doctor', 'dori', 'kasallik',
-];
-
-const EDUCATION_KEYWORDS = [
-    // Math
-    'matematika', 'math', 'algebra', 'geometriya', 'formula', 'tenglama',
-    'hisobla', 'son', 'kasrlar', 'foiz', 'kvadrat', 'uchburchak', 'doira',
-    'logarifm', 'integral', 'differensial', 'vektor', 'matritsa', 'statistika',
-    // Physics
-    'fizika', 'physics', 'nyuton', 'tezlik', 'tezlanish', 'kuch', 'energiya',
-    'elektr', 'magnit', 'yorug\'lik', 'to\'lqin', 'atom', 'yadro', 'gravitatsiya',
-    // Chemistry
-    'kimyo', 'chemistry', 'element', 'molekula', 'reaksiya', 'kislota', 'asos',
-    'davriy jadval', 'oksid', 'tuz', 'ion', 'valentlik',
-    // Biology
-    'biologiya', 'biology', 'hujayra', 'gen', 'dnk', 'evolyutsiya', 'fotosintez',
-    'organ', 'organizm', 'ekologiya', 'hayvon', 'o\'simlik',
-    // History
-    'tarix', 'history', 'urush', 'davlat', 'imperiya', 'mustaqillik', 'amir temur',
-    'jadidlar', 'sovet', 'inqilob',
-    // Geography
-    'geografiya', 'geography', 'davlat', 'poytaxt', 'iqlim', 'materik',
-    'okean', 'daryo', 'tog\'', 'cho\'l',
-    // Languages
-    'ingliz tili', 'english', 'grammar', 'grammatika', 'so\'z', 'tarjima',
-    'translate', 'gap', 'fe\'l', 'sifat', 'ot', 'ravish', 'tense',
-    // Literature
-    'adabiyot', 'literature', 'she\'r', 'roman', 'hikoya', 'navoiy', 'bobur',
-    // EduShare platform
-    'edushare', 'kurs', 'dars', 'sertifikat', 'test', 'imtihon', 'modul',
-    'o\'qish', 'o\'rganish', 'ta\'lim', 'fan', 'maktab', 'universitet',
+    'ob-havo', 'weather', 'retsept', 'recipe', 'taom tayyorla', 'ovqat tayyorla',
+    'pishirish', 'siyosat', 'politic', 'bitcoin', 'crypto', 'valyuta kurs',
+    'pul ishlash', 'sevgi maslahat', 'qiz bilan', 'yigit bilan',
 ];
 
 function isEducationRelated(text) {
     const lower = text.toLowerCase();
 
-    // Check if it contains any education keyword
-    const hasEducation = EDUCATION_KEYWORDS.some(kw => lower.includes(kw));
-    if (hasEducation) return true;
-
-    // Check if it contains any blocked keyword
+    // Only block if message contains a clearly non-educational keyword
     const hasBlocked = BLOCKED_KEYWORDS.some(kw => lower.includes(kw));
     if (hasBlocked) return false;
 
-    // If the message is very short (greeting/salom), allow it
-    if (lower.length < 15) return true;
-
-    // Default: block unknown topics
-    return false;
+    // Allow everything else — server-side AI prompt handles the rest
+    return true;
 }
 
 const AIChatBot = () => {
