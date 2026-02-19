@@ -17,6 +17,7 @@ import CertificatePage from './pages/CertificatePage/CertificatePage';
 import { AnimatePresence, motion } from 'framer-motion';
 import apiClient, { API_ENDPOINTS } from './config/api';
 import SplashScreen from './components/SplashScreen/SplashScreen';
+import AIChatBot from './components/AIChatBot/AIChatBot';
 import './App.css';
 
 // Google OAuth callback handler component
@@ -170,6 +171,7 @@ function App() {
         <div className="custom-cursor-follower"></div>
         <div className="scroll-progress"></div>
         <Navbar />
+        <AIChatBot />
         <main className="main-content">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
