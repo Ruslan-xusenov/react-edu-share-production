@@ -70,3 +70,84 @@ def api_stats(request):
             'certificates': Certificate.objects.count(),
         }
     })
+
+
+@csrf_exempt
+def ai_chat(request):
+    """AI Chat proxy endpoint — calls OpenRouter API from server side"""
+    import requests as req
+    import json
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST only'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+        messages = body.get('messages', [])
+
+        if not messages:
+            return JsonResponse({'error': 'No messages provided'}, status=400)
+
+        OPENROUTER_API_KEY = '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'
+
+        SYSTEM_PROMPT = (
+            "Sen EduShare AI — faqat ta'lim uchun yaratilgan yordamchi.\n\n"
+            "Agar foydalanuvchi salomlashsa (salom, hello, hi, assalomu alaykum va h.k.), "
+            "do'stona javob ber va o'zingni tanishtir: 'Men EduShare AI yordamchisiman. "
+            "Sizga ta'lim fanlari bo'yicha yordam bera olaman. Savol bering!' de.\n\n"
+            "🚨 MUHIM QOIDA: Sen FAQAT maktab va universitetdagi FANLAR "
+            "(matematika, fizika, kimyo, biologiya, tarix, geografiya, ingliz tili, adabiyot) "
+            "bo'yicha NAZARIY tushuntirish berasan.\n\n"
+            "Sen HECH QACHON quyidagilarni qilmasliging kerak:\n"
+            "- Kod yozib berish (Python, JavaScript, HTML yoki boshqa tilda)\n"
+            "- Bot, dastur, sayt, ilova yaratishga yordam berish\n"
+            "- Retsept, sport, ob-havo, film, musiqa, o'yin haqida gapirish\n"
+            "- Siyosat, din, shaxsiy maslahat berish\n"
+            "- Telegram bot, Discord bot yoki boshqa texnik loyiha qilish\n"
+            "- Hech qanday amaliy kod, script yoki texnik yechim berish\n\n"
+            "Sen FAQAT:\n"
+            "- Maktab fanlari bo'yicha nazariy savollarni tushuntirasan\n"
+            "- Matematika formulalari va misollarni yechishga yordam berasan\n"
+            "- Ingliz tili grammatikasi va so'z boyligini o'rgatasan\n"
+            "- EduShare platformasidan foydalanish haqida ma'lumot berasan\n"
+            "- Imtihonga tayyorgarlik bo'yicha maslahat berasan\n\n"
+            "Agar foydalanuvchi ta'limga oid bo'lmagan savol bersa, DOIM aynan shu javobni ber:\n"
+            "\"📚 Kechirasiz, men faqat ta'lim fanlari bo'yicha nazariy savollarga javob beraman. "
+            "Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. "
+            "Iltimos, fan bo'yicha savol bering!\"\n\n"
+            "Bu qoidani HECH QACHON buzma."
+        )
+
+        api_messages = [{'role': 'system', 'content': SYSTEM_PROMPT}] + messages
+
+        response = req.post(
+            'https://openrouter.ai/api/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://edushare.uz',
+                'X-Title': 'EduShare AI',
+            },
+            json={
+                'model': 'openai/gpt-4.1-nano',
+                'messages': api_messages,
+                'max_tokens': 1024,
+                'temperature': 0.7,
+            },
+            timeout=30,
+        )
+
+        data = response.json()
+
+        if 'choices' in data and data['choices']:
+            content = data['choices'][0].get('message', {}).get('content', '')
+            return JsonResponse({'status': 'success', 'content': content})
+        else:
+            return JsonResponse({'status': 'error', 'content': 'AI javob bermadi'}, status=500)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except req.exceptions.Timeout:
+        return JsonResponse({'error': 'AI server timeout'}, status=504)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

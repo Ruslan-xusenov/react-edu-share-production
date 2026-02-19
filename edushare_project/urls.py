@@ -54,6 +54,7 @@ urlpatterns = [
     # API endpoints
     path('api/', include('courses.api_urls')),
     path('api/accounts/', include('accounts.urls')),
+    path('api/ai-chat/', __import__('core.views', fromlist=['ai_chat']).ai_chat, name='ai-chat'),
     path('api-auth/', include('rest_framework.urls')),
     
     # React App Root & Catch-all
