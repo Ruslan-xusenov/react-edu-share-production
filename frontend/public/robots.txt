@@ -1,0 +1,25 @@
+# EduShare School - robots.txt
+# https://edushare.uz
+
+User-agent: *
+Allow: /
+Allow: /courses
+Allow: /about
+Allow: /rankings
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /accounts/
+
+# Sitemap
+Sitemap: https://edushare.uz/sitemap.xml
+
+# Google Bot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Yandex Bot
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2

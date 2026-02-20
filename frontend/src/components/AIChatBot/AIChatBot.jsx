@@ -3,32 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import apiClient, { API_ENDPOINTS } from '../../config/api';
 import './AIChatBot.css';
 
-const REFUSAL_MESSAGE = '📚 Kechirasiz, men faqat ta\'lim fanlari (matematika, fizika, kimyo, tarix, ingliz tili va h.k.) bo\'yicha nazariy savollarga javob beraman. Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. Iltimos, fan bo\'yicha savol bering!';
+const REFUSAL_MESSAGE = '⚠️ Kechirasiz, bu turdagi so\'rovlarga javob bera olmayman. Iltimos, boshqa savol bering!';
 
-// Client-side filter: ONLY block messages with clearly non-educational keywords
-// All other messages pass through to the server where AI system prompt handles filtering
+// Client-side filter: ONLY block clearly harmful/inappropriate messages
+// All educational, sport, music, tech, networking topics are ALLOWED
 const BLOCKED_KEYWORDS = [
-    // Programming & code
-    'kod yoz', 'code', 'script', 'programma yoz', 'dastur yoz', 'bot yoz',
-    'bot yasa', 'bot qil', 'api', 'server qur', 'frontend', 'backend',
-    'database', 'deploy', 'github', 'terminal', 'function', 'npm', 'pip',
-    'framework', 'react', 'django', 'flask', 'web sayt yasa', 'websayt',
-    'ilova yasa', 'mobile app', 'android app', 'ios app', 'telegram bot',
-    'discord bot', 'hack', 'crack', 'virus',
-    // Entertainment
-    'film tavsiya', 'kino tavsiya', 'serial tavsiya', 'anime', 'manga',
-    'o\'yin tavsiya', 'gta', 'minecraft', 'fortnite', 'pubg',
-    'qo\'shiq tavsiya', 'music tavsiya',
-    // Non-educational
-    'ob-havo', 'weather', 'retsept', 'recipe', 'taom tayyorla', 'ovqat tayyorla',
-    'pishirish', 'siyosat', 'politic', 'bitcoin', 'crypto', 'valyuta kurs',
-    'pul ishlash', 'sevgi maslahat', 'qiz bilan', 'yigit bilan',
+    // Harmful/dangerous content only
+    'hack', 'crack', 'virus', 'ddos', 'exploit',
+    'qurol', 'bomba', 'portlatish',
+    'pornograf', '18+', 'erotik',
 ];
 
 function isEducationRelated(text) {
     const lower = text.toLowerCase();
 
-    // Only block if message contains a clearly non-educational keyword
+    // Only block if message contains clearly harmful keywords
     const hasBlocked = BLOCKED_KEYWORDS.some(kw => lower.includes(kw));
     if (hasBlocked) return false;
 
@@ -50,6 +39,7 @@ const AIChatBot = () => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
     const chatBodyRef = useRef(null);
+    const chatWindowRef = useRef(null);
 
     const scrollToBottom = useCallback(() => {
         if (messagesEndRef.current) {
@@ -65,6 +55,34 @@ const AIChatBot = () => {
         if (isOpen && inputRef.current) {
             inputRef.current.focus();
         }
+    }, [isOpen]);
+
+    // Chat body scroll — sahifaga scroll o'tmasin
+    useEffect(() => {
+        const chatBody = chatBodyRef.current;
+        if (!chatBody) return;
+
+        const handleWheel = (e) => {
+            const { scrollTop, scrollHeight, clientHeight } = chatBody;
+            const atTop = scrollTop === 0 && e.deltaY < 0;
+            const atBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
+            if (atTop || atBottom) {
+                e.preventDefault();
+            }
+        };
+
+        const handleTouchMove = (e) => {
+            // touchmove inside chat body should not propagate
+            e.stopPropagation();
+        };
+
+        chatBody.addEventListener('wheel', handleWheel, { passive: false });
+        chatBody.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        return () => {
+            chatBody.removeEventListener('wheel', handleWheel);
+            chatBody.removeEventListener('touchmove', handleTouchMove);
+        };
     }, [isOpen]);
 
     const typeMessage = useCallback((fullText, msgIndex) => {
@@ -159,13 +177,27 @@ const AIChatBot = () => {
 
     return (
         <>
+            {/* Overlay backdrop — tashqariga bosanda chatni yopish */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        className="ai-chat-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        onClick={() => setIsOpen(false)}
+                        id="ai-chat-overlay"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Floating Toggle Button */}
             <motion.button
-                className="ai-chat-toggle"
+                className={`ai-chat-toggle ${isOpen ? 'chat-open' : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                animate={isOpen ? { rotate: 0 } : { rotate: 0 }}
                 aria-label="AI Chat Toggle"
                 id="ai-chat-toggle-btn"
             >
@@ -210,10 +242,12 @@ const AIChatBot = () => {
                 {isOpen && (
                     <motion.div
                         className="ai-chat-window"
+                        ref={chatWindowRef}
                         initial={{ opacity: 0, y: 20, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.9 }}
                         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        onClick={(e) => e.stopPropagation()}
                         id="ai-chat-window"
                     >
                         {/* Header */}

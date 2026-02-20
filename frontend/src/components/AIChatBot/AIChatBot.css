@@ -2,6 +2,17 @@
    🤖 EduShare AI ChatBot — Futuristic Glassmorphism Design
    ═══════════════════════════════════════════════════════ */
 
+/* ──── Overlay Backdrop ──── */
+.ai-chat-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99997;
+  background: transparent;
+}
+
 /* ──── Toggle Button ──── */
 .ai-chat-toggle {
   position: fixed;
@@ -52,6 +63,7 @@
     transform: scale(1);
     opacity: 0.6;
   }
+
   100% {
     transform: scale(1.8);
     opacity: 0;
@@ -70,12 +82,10 @@
   flex-direction: column;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(
-    160deg,
-    rgba(5, 5, 15, 0.97) 0%,
-    rgba(10, 10, 25, 0.98) 50%,
-    rgba(5, 5, 20, 0.99) 100%
-  );
+  background: linear-gradient(160deg,
+      rgba(5, 5, 15, 0.97) 0%,
+      rgba(10, 10, 25, 0.98) 50%,
+      rgba(5, 5, 20, 0.99) 100%);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   box-shadow:
@@ -92,11 +102,9 @@
   justify-content: space-between;
   padding: 16px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: linear-gradient(
-    180deg,
-    rgba(0, 242, 254, 0.04) 0%,
-    transparent 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 242, 254, 0.04) 0%,
+      transparent 100%);
 }
 
 .ai-chat-header-left {
@@ -130,8 +138,17 @@
 }
 
 @keyframes ai-glow-breathe {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.5); }
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.5);
+  }
 }
 
 .ai-chat-header-info {
@@ -169,8 +186,15 @@
 }
 
 @keyframes status-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .ai-chat-header-actions {
@@ -202,6 +226,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
@@ -265,21 +291,17 @@
 }
 
 .ai-chat-message.assistant .ai-msg-bubble {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 4px 16px 16px 16px;
 }
 
 .ai-chat-message.user .ai-msg-bubble {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 242, 254, 0.12) 0%,
-    rgba(112, 0, 255, 0.08) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(0, 242, 254, 0.12) 0%,
+      rgba(112, 0, 255, 0.08) 100%);
   border: 1px solid rgba(0, 242, 254, 0.15);
   border-radius: 16px 4px 16px 16px;
 }
@@ -323,10 +345,14 @@
 }
 
 @keyframes ai-typing-bounce {
-  0%, 60%, 100% {
+
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
     opacity: 0.4;
   }
+
   30% {
     transform: translateY(-8px);
     opacity: 1;
@@ -340,11 +366,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.3) 0%,
-    transparent 100%
-  );
+  background: linear-gradient(0deg,
+      rgba(0, 0, 0, 0.3) 0%,
+      transparent 100%);
 }
 
 .ai-chat-input-wrapper {
@@ -433,6 +457,14 @@
     height: 52px;
   }
 
+  /* Chat ochiq bo'lganda toggle tugma tepaga ko'tariladi */
+  .ai-chat-toggle.chat-open {
+    bottom: auto;
+    top: 12px;
+    right: 12px;
+    z-index: 100000;
+  }
+
   .ai-chat-window {
     bottom: 0;
     right: 0;
@@ -471,10 +503,19 @@
 
 /* ──── Prevent cursor override on chatbot elements ──── */
 @media (hover: hover) and (pointer: fine) {
+
   .ai-chat-input,
   .ai-chat-send,
   .ai-chat-toggle,
   .ai-chat-action-btn {
     cursor: none !important;
+  }
+}
+
+/* ──── Desktop: chat ochiq bo'lganda toggle yuqoriga ──── */
+@media (min-width: 769px) {
+  .ai-chat-toggle.chat-open {
+    bottom: 580px;
+    right: 28px;
   }
 }
