@@ -151,9 +151,18 @@ const AIChatBot = () => {
             }
         } catch (error) {
             console.error('AI Chat Error:', error);
+            let errorMsg = '⚠️ Tarmoq xatoligi. Iltimos, qayta urinib ko\'ring.';
+            if (error.response?.data) {
+                const serverError = error.response.data;
+                if (serverError.content) {
+                    errorMsg = `⚠️ ${serverError.content}`;
+                } else if (serverError.error) {
+                    errorMsg = `⚠️ Server xatosi: ${serverError.error}`;
+                }
+            }
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: '⚠️ Tarmoq xatoligi. Iltimos, qayta urinib ko\'ring.'
+                content: errorMsg
             }]);
             setIsLoading(false);
         }

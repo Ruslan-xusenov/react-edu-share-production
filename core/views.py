@@ -77,6 +77,9 @@ def ai_chat(request):
     """AI Chat proxy endpoint — calls OpenRouter API from server side"""
     import requests as req
     import json
+    import logging
+
+    logger = logging.getLogger('django')
 
     if request.method != 'POST':
         return JsonResponse({'error': 'POST only'}, status=405)
@@ -88,37 +91,36 @@ def ai_chat(request):
         if not messages:
             return JsonResponse({'error': 'No messages provided'}, status=400)
 
-        OPENROUTER_API_KEY = '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'
+        OPENROUTER_API_KEY = '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'
 
         SYSTEM_PROMPT = (
-            "Sen EduShare AI — faqat ta'lim uchun yaratilgan yordamchi.\n\n"
+            "Sen EduShare AI — aqlli va do'stona yordamchi.\n\n"
             "Agar foydalanuvchi salomlashsa (salom, hello, hi, assalomu alaykum va h.k.), "
-            "do'stona javob ber va o'zingni tanishtir: 'Men EduShare AI yordamchisiman. "
-            "Sizga ta'lim fanlari bo'yicha yordam bera olaman. Savol bering!' de.\n\n"
-            "🚨 MUHIM QOIDA: Sen FAQAT maktab va universitetdagi FANLAR "
-            "(matematika, fizika, kimyo, biologiya, tarix, geografiya, ingliz tili, adabiyot) "
-            "bo'yicha NAZARIY tushuntirish berasan.\n\n"
-            "Sen HECH QACHON quyidagilarni qilmasliging kerak:\n"
-            "- Kod yozib berish (Python, JavaScript, HTML yoki boshqa tilda)\n"
-            "- Bot, dastur, sayt, ilova yaratishga yordam berish\n"
-            "- Retsept, sport, ob-havo, film, musiqa, o'yin haqida gapirish\n"
-            "- Siyosat, din, shaxsiy maslahat berish\n"
-            "- Telegram bot, Discord bot yoki boshqa texnik loyiha qilish\n"
-            "- Hech qanday amaliy kod, script yoki texnik yechim berish\n\n"
-            "Sen FAQAT:\n"
-            "- Maktab fanlari bo'yicha nazariy savollarni tushuntirasan\n"
-            "- Matematika formulalari va misollarni yechishga yordam berasan\n"
-            "- Ingliz tili grammatikasi va so'z boyligini o'rgatasan\n"
-            "- EduShare platformasidan foydalanish haqida ma'lumot berasan\n"
-            "- Imtihonga tayyorgarlik bo'yicha maslahat berasan\n\n"
-            "Agar foydalanuvchi ta'limga oid bo'lmagan savol bersa, DOIM aynan shu javobni ber:\n"
-            "\"📚 Kechirasiz, men faqat ta'lim fanlari bo'yicha nazariy savollarga javob beraman. "
-            "Kod yozish yoki texnik loyihalar bilan yordam bera olmayman. "
-            "Iltimos, fan bo'yicha savol bering!\"\n\n"
-            "Bu qoidani HECH QACHON buzma."
+            "do'stona javob ber va o'zingni tanishtir.\n\n"
+            "Sen quyidagi barcha mavzularda yordam bera olasan:\n"
+            "- 📚 Ta'lim fanlari: matematika, fizika, kimyo, biologiya, tarix, geografiya, adabiyot\n"
+            "- 🌐 Tillar: ingliz tili, rus tili, o'zbek tili grammatikasi\n"
+            "- 💻 Texnologiya va IT: dasturlash, networking, kompyuter fanlari, AI\n"
+            "- 🎵 San'at va madaniyat: musiqa, rassomchilik, kino, adabiyot\n"
+            "- ⚽ Sport va sog'liq: sport turlari, jismoniy tarbiya, salomatlik\n"
+            "- 🔬 Fan va texnika: astronomiya, robototexnika, muhandislik\n"
+            "- 📊 Biznes va iqtisod: marketing, menejment, moliya asoslari\n"
+            "- 🌍 Umumiy bilim: geografiya, ekologiya, jamiyat\n\n"
+            "Sen FAQAT quyidagi mavzulardan BOSH TORTASAN:\n"
+            "- Zo'ravonlik, qurol-yarog', noqonuniy faoliyat\n"
+            "- Kattalar uchun (18+) kontent\n"
+            "- Haqorat, irqchilik, diskriminatsiya\n"
+            "- Shaxsiy ma'lumotlarni so'rash yoki tarqatish\n\n"
+            "Agar foydalanuvchi taqiqlangan mavzu haqida so'rasa, muloyimlik bilan rad et:\n"
+            "\"Kechirasiz, bu mavzuda yordam bera olmayman. "
+            "Boshqa savol bering!\"\n\n"
+            "Javoblaringni o'zbek tilida, tushunarli va qisqa ber. "
+            "Kerak bo'lsa misollar va tushuntirishlar qo'sh."
         )
 
         api_messages = [{'role': 'system', 'content': SYSTEM_PROMPT}] + messages
+
+        logger.info(f"[AI Chat] Sending request to OpenRouter with model openai/gpt-4.1-nano")
 
         response = req.post(
             'https://openrouter.ai/api/v1/chat/completions',
@@ -137,17 +139,41 @@ def ai_chat(request):
             timeout=30,
         )
 
+        logger.info(f"[AI Chat] OpenRouter response status: {response.status_code}")
+        logger.info(f"[AI Chat] OpenRouter response body: {response.text[:500]}")
+
         data = response.json()
+
+        # Check for API error response
+        if response.status_code != 200:
+            error_msg = data.get('error', {})
+            if isinstance(error_msg, dict):
+                error_msg = error_msg.get('message', str(error_msg))
+            logger.error(f"[AI Chat] OpenRouter API error: {error_msg}")
+            return JsonResponse({
+                'status': 'error',
+                'content': f'AI xizmati xatosi: {error_msg}'
+            }, status=502)
 
         if 'choices' in data and data['choices']:
             content = data['choices'][0].get('message', {}).get('content', '')
             return JsonResponse({'status': 'success', 'content': content})
         else:
-            return JsonResponse({'status': 'error', 'content': 'AI javob bermadi'}, status=500)
+            logger.error(f"[AI Chat] No choices in response: {data}")
+            return JsonResponse({
+                'status': 'error',
+                'content': f'AI javob bermadi. Response: {json.dumps(data)[:200]}'
+            }, status=500)
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except req.exceptions.Timeout:
         return JsonResponse({'error': 'AI server timeout'}, status=504)
+    except req.exceptions.ConnectionError as e:
+        logger.error(f"[AI Chat] Connection error: {str(e)}")
+        return JsonResponse({
+            'error': f'OpenRouter ulanish xatosi: {str(e)[:200]}'
+        }, status=502)
     except Exception as e:
+        logger.error(f"[AI Chat] Unexpected error: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
