@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FaLock, FaEnvelope, FaGraduationCap, FaGoogle } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaGoogle } from 'react-icons/fa';
+import { HiOutlineAcademicCap } from 'react-icons/hi2';
+import { BsStars, BsShieldCheck, BsLightningCharge, BsGlobe2 } from 'react-icons/bs';
 import './AuthPage.css';
 
 import apiClient, { API_ENDPOINTS, BACKEND_URL } from '../../config/api';
@@ -60,13 +62,13 @@ const LoginPage = () => {
                         className="auth-card"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <div className="auth-header">
                             <div className="auth-logo">
-                                <FaGraduationCap />
+                                <HiOutlineAcademicCap />
                             </div>
-                            <h1>Xush Kelibsiz!</h1>
+                            <h1>Xush Kelibsiz</h1>
                             <p>O'rganish sayohatingizni davom ettirish uchun kiring</p>
                         </div>
 
@@ -74,14 +76,14 @@ const LoginPage = () => {
                             <button
                                 onClick={() => window.location.href = `${BACKEND_URL}/accounts/google/login/`}
                                 className="social-btn google"
-                                style={{ width: '100%', justifyContent: 'center', gap: '15px', fontSize: '1.1rem', padding: '14px' }}
+                                style={{ width: '100%', justifyContent: 'center', gap: '12px', fontSize: '0.9rem', padding: '0.85rem' }}
                             >
                                 <FaGoogle /> Google orqali kirish
                             </button>
                         </div>
 
                         <div className="divider">
-                            <span>yoki email orqali kiring</span>
+                            <span>yoki email orqali</span>
                         </div>
 
                         <form onSubmit={handleSubmit} className="auth-form">
@@ -131,28 +133,28 @@ const LoginPage = () => {
                         className="auth-side"
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <div className="side-content">
-                            <h2>Bugun O'rganishni Boshlang</h2>
+                            <h2>Bilim Olamiga Xush Kelibsiz</h2>
                             <p>EduShareda allaqachon o'rganayotgan va o'qitayotgan minglab o'quvchilarga qo'shiling.</p>
                             <div className="side-features">
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsStars /></div>
                                     <span>150+ bepul kurslarga kirish</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsGlobe2 /></div>
                                     <span>Tengdosh o'quvchilardan o'rganing</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsLightningCharge /></div>
                                     <span>Ball va nishonlar yutib oling</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsShieldCheck /></div>
                                     <span>24/7 o'rganish imkoniyati</span>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
                     </motion.div>

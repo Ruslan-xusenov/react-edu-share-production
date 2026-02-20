@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FaUser, FaLock, FaEnvelope, FaGraduationCap, FaGoogle } from 'react-icons/fa';
+import { FaUser, FaLock, FaEnvelope, FaGoogle } from 'react-icons/fa';
+import { HiOutlineAcademicCap } from 'react-icons/hi2';
+import { BsRocketTakeoff, BsAward, BsPeople, BsBookHalf } from 'react-icons/bs';
 import './AuthPage.css';
 
 import apiClient, { API_ENDPOINTS, BACKEND_URL } from '../../config/api';
@@ -46,7 +48,6 @@ const SignupPage = () => {
                 localStorage.setItem('authToken', 'session-active');
                 localStorage.setItem('user', JSON.stringify(res.data.user));
 
-                // Success message already in state, redirect after delay
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 2000);
@@ -80,11 +81,11 @@ const SignupPage = () => {
                         className="auth-card"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <div className="auth-header">
                             <div className="auth-logo">
-                                <FaGraduationCap />
+                                <HiOutlineAcademicCap />
                             </div>
                             <h1>Hisob Yarating</h1>
                             <p>O'rganish sayohatingizni bugundan boshlang</p>
@@ -94,7 +95,7 @@ const SignupPage = () => {
                             <button
                                 onClick={() => window.location.href = `${BACKEND_URL}/accounts/google/login/`}
                                 className="social-btn google"
-                                style={{ width: '100%', justifyContent: 'center', gap: '15px', fontSize: '1.1rem', padding: '14px' }}
+                                style={{ width: '100%', justifyContent: 'center', gap: '12px', fontSize: '0.9rem', padding: '0.85rem' }}
                             >
                                 <FaGoogle /> Google orqali ro'yxatdan o'tish
                             </button>
@@ -185,28 +186,28 @@ const SignupPage = () => {
                         className="auth-side"
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <div className="side-content">
                             <h2>EduSharega Qo'shiling</h2>
                             <p>Minglab o'quvchilar allaqachon bu platformada bilim olmoqda va ulashmoqda.</p>
                             <div className="side-features">
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsRocketTakeoff /></div>
                                     <span>Butunlay bepul platforma</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsBookHalf /></div>
                                     <span>O'z darslaringizni yarating</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsAward /></div>
                                     <span>Sertifikatlar oling</span>
-                                </div>
-                                <div className="feature-item">
-                                    <div className="feature-icon">✓</div>
+                                </motion.div>
+                                <motion.div className="feature-item" whileHover={{ x: 5 }}>
+                                    <div className="feature-icon"><BsPeople /></div>
                                     <span>Hamjamiyatda o'sib boring</span>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
                     </motion.div>
