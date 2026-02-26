@@ -99,7 +99,10 @@ class Lesson(models.Model):
     
     def __str__(self):
         return f"{self.title} by {self.author.full_name}"
-    
+
+    def get_absolute_url(self):
+        return f'/courses/lesson/{self.id}/'
+
     def get_youtube_embed_url(self):
         import re
         # Regular watch URL, Short URL, Shorts, and Embed URL formats

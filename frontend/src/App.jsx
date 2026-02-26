@@ -20,21 +20,22 @@ import SplashScreen from './components/SplashScreen/SplashScreen';
 import AIChatBot from './components/AIChatBot/AIChatBot';
 import './App.css';
 
-// Google OAuth callback handler component
-// ScrollReset component to reset horizontal scroll on navigation
+// ScrollReset component — scroll to top on navigation
 function ScrollReset() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     const container = document.querySelector('.main-content');
     if (container) {
-      container.scrollLeft = 0;
+      container.scrollTo({ top: 0, behavior: 'instant' });
     }
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;
 }
 
+// Google OAuth callback handler
 function AuthCallbackHandler() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -61,11 +62,12 @@ function AuthCallbackHandler() {
   return null;
 }
 
+// Page transition — vertical (fade + slide up)
 const PageWrapper = ({ children }) => (
   <motion.div
-    initial={{ opacity: 0, x: 20 }}
-    animate={{ opacity: 1, x: 0 }}
-    exit={{ opacity: 0, x: -20 }}
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     style={{ width: '100%' }}
   >
@@ -78,6 +80,7 @@ function App() {
   const handleSplashComplete = useCallback(() => setShowSplash(false), []);
   const location = useLocation();
 
+  // Custom cursor
   useEffect(() => {
     const cursor = document.querySelector('.custom-cursor');
     const follower = document.querySelector('.custom-cursor-follower');
@@ -95,69 +98,19 @@ function App() {
     return () => window.removeEventListener('mousemove', moveCursor);
   }, []);
 
-  useEffect(() => {
-    let isScrolling = false;
-    const handleWheel = (e) => {
-      // Disable horizontal scroll conversion on mobile/tablet
-      if (window.innerWidth <= 1024) return;
-
-      const container = document.querySelector('.main-content');
-      if (!container || isScrolling) return;
-
-      // Check if we are inside a vertically scrollable element that hasn't reached its limits
-      const isVerticallyScrollable = (el) => {
-        if (!el || el === document.body || el === document.documentElement) return false;
-        const style = window.getComputedStyle(el);
-        const overflowY = style.overflowY;
-        const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
-        const canScrollMore = el.scrollHeight > el.clientHeight;
-
-        if (isScrollable && canScrollMore) {
-          const isAtTop = el.scrollTop === 0;
-          const isAtBottom = Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) < 1;
-          if (e.deltaY < 0 && !isAtTop) return true;
-          if (e.deltaY > 0 && !isAtBottom) return true;
-        }
-        return isVerticallyScrollable(el.parentElement);
-      };
-
-      if (isVerticallyScrollable(e.target)) {
-        return; // Allow native vertical scroll
-      }
-
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        const direction = e.deltaY > 0 ? 1 : -1;
-        const scrollAmount = window.innerWidth;
-
-        isScrolling = true;
-        container.scrollBy({
-          left: direction * scrollAmount,
-          behavior: 'smooth'
-        });
-
-        setTimeout(() => {
-          isScrolling = false;
-        }, 800);
-      }
-    };
-
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, []);
-
+  // Vertical scroll progress bar
   useEffect(() => {
     const handleScroll = () => {
       const container = document.querySelector('.main-content');
       const progress = document.querySelector('.scroll-progress');
       if (container && progress) {
-        const scrollPercent = (container.scrollLeft / (container.scrollWidth - container.clientWidth)) * 100;
-        progress.style.width = scrollPercent + '%';
+        const scrollPercent = (container.scrollTop / (container.scrollHeight - container.clientHeight)) * 100;
+        progress.style.width = (scrollPercent || 0) + '%';
       }
     };
 
     const container = document.querySelector('.main-content');
-    container?.addEventListener('scroll', handleScroll);
+    container?.addEventListener('scroll', handleScroll, { passive: true });
     return () => container?.removeEventListener('scroll', handleScroll);
   }, []);
 

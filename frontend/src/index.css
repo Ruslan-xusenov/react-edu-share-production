@@ -47,41 +47,56 @@
 
 html,
 body {
-  height: 100vh;
-  width: 100vw;
+  width: 100%;
+  min-height: 100vh;
   font-family: var(--font-body);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #root,
 .app {
-  height: 100vh;
-  width: 100vw;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* ── Vertical Scroll Layout ── */
 .main-content {
   flex: 1;
   display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
   scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: y proximity;
   background: var(--bg-primary);
 }
 
 .main-content::-webkit-scrollbar {
-  display: none;
+  width: 4px;
 }
 
-/* 🧱 Horizontal Layout Components */
+.main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.15);
+  border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.3);
+}
+
+/* 🧱 Vertical Section Layout */
 .horizontal-section {
-  width: 100vw;
-  height: 100vh;
-  flex-shrink: 0;
+  width: 100%;
+  min-height: 100vh;
   scroll-snap-align: start;
   overflow-x: hidden;
   overflow-y: auto;
@@ -90,9 +105,9 @@ body {
 
 .horizontal-page {
   display: flex;
-  flex-direction: row;
-  height: 100vh;
-  width: max-content;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* 🔤 Opus Typography */
@@ -208,7 +223,7 @@ input:-webkit-autofill:focus {
   text-transform: uppercase;
 }
 
-/* Scroll Progress */
+/* Scroll Progress — vertical */
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -246,44 +261,11 @@ input:-webkit-autofill:focus {
   }
 }
 
-/* Tablet and below: switch to vertical layout */
+/* Tablet and below */
 @media (max-width: 1024px) {
 
-  html,
-  body {
-    overflow-x: hidden;
-    overflow-y: auto !important;
-    height: auto !important;
-  }
-
-  #root,
-  .app {
-    height: auto !important;
-    min-height: 100vh;
-    overflow: visible !important;
-  }
-
-  .main-content {
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto !important;
-    scroll-snap-type: none;
-    height: auto !important;
-    flex: none;
-  }
-
   .horizontal-section {
-    width: 100%;
-    height: auto;
-    min-height: 100vh;
-    flex-shrink: unset;
-    scroll-snap-align: none;
-  }
-
-  .horizontal-page {
-    flex-direction: column;
-    height: auto;
-    width: 100%;
+    min-height: auto;
   }
 
   .scroll-progress {

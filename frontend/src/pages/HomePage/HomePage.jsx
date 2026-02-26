@@ -197,7 +197,7 @@ const HomePage = () => {
             </section>
 
             {/* FOOTER - Final Section */}
-            <section className="horizontal-section" style={{ height: 'auto', minHeight: '100vh', display: 'flex', alignItems: 'flex-end', width: '100vw' }}>
+            <section className="horizontal-section" style={{ height: 'auto', minHeight: 'auto', display: 'flex', alignItems: 'flex-end', width: '100%' }}>
                 <Footer />
             </section>
         </div>

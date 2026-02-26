@@ -2,7 +2,8 @@
 
 .about-page {
     display: flex;
-    height: 100vh;
+    flex-direction: column;
+    width: 100%;
     background: #000;
 }
 
@@ -12,9 +13,8 @@
 .achievements-section,
 .team-section,
 .about-cta {
-    width: 100vw;
-    height: 100vh;
-    flex-shrink: 0;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -123,7 +123,7 @@
 
 .team-card {
     width: 350px;
-    flex-shrink: 0;
+
     background: #050505;
     border: 1px solid var(--border);
 }
@@ -242,7 +242,7 @@
         scroll-snap-type: x mandatory;
         gap: 1.5rem;
         padding: 2rem 5vw !important;
-        width: 100vw;
+        width: 100%;
         margin-left: -5vw;
         scrollbar-width: none;
     }
@@ -254,7 +254,7 @@
     .team-card {
         width: 85vw !important;
         max-width: 320px;
-        flex-shrink: 0;
+
         scroll-snap-align: center;
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(20px);

@@ -56,16 +56,17 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/ai-chat/', __import__('core.views', fromlist=['ai_chat']).ai_chat, name='ai-chat'),
     path('api-auth/', include('rest_framework.urls')),
-    
-    # React App Root & Catch-all
-    # Bu qism hamma React routinglarini (shuningdek asosiy sahifani) ushlab oladi
-    re_path(r'^(?!api|admin|media|static|accounts|sitemap.xml|robots.txt).*$', TemplateView.as_view(template_name='index.html'), name='react-app'),
 
+    # Core app URLs
     path('core/', include('core.urls')),
 
-    # SEO
+    # SEO — sitemap va robots.txt React catch-all dan OLDIN bo'lishi kerak
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
+
+    # React App Root & Catch-all
+    # Bu qism hamma React routinglarini (shuningdek asosiy sahifani) ushlab oladi
+    re_path(r'^(?!api|admin|media|static|accounts|core|sitemap\.xml|robots\.txt).*$', TemplateView.as_view(template_name='index.html'), name='react-app'),
     
 ]
 
