@@ -72,21 +72,24 @@ const HomePage = () => {
                 <link rel="canonical" href="https://edushare.uz/" />
 
                 {/* JSON-LD Schema for Google */}
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "WebSite",
-                        "name": "EduShare",
-                        "alternateName": "edushare.uz",
-                        "url": "https://edushare.uz/",
-                        "description": "O'zbekistondagi bepul onlayn ta'lim platformasi",
-                        "publisher": {
-                            "@type": "Organization",
-                            "name": "EduShare School",
-                            "logo": "https://edushare.uz/static/logo.png"
-                        }
-                    })}
-                </script>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "WebSite",
+                            "name": "EduShare",
+                            "alternateName": "edushare.uz",
+                            "url": "https://edushare.uz/",
+                            "description": "O'zbekistondagi bepul onlayn ta'lim platformasi",
+                            "publisher": {
+                                "@type": "Organization",
+                                "name": "EduShare School",
+                                "logo": "https://edushare.uz/static/logo.png"
+                            }
+                        })
+                    }}
+                />
             </Helmet>
 
             {/* HERO SECTION */}
