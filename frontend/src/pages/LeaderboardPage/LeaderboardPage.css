@@ -1,188 +1,456 @@
+/* ═══════════════════════════════════════════════════════
+   LEADERBOARD — PREMIUM PODIUM DESIGN
+   ═══════════════════════════════════════════════════════ */
+
 .leaderboard-page {
     display: flex;
     flex-direction: row;
     width: max-content;
     height: 100vh;
-    background: #000;
+    background: #030308;
 }
 
-.leaderboard-header-section {
-    width: 100vw;
-    height: 100vh;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 10vw;
-    background: radial-gradient(circle at top left, rgba(200, 160, 255, 0.05), transparent);
-    scroll-snap-align: start;
-    position: relative;
-}
-
-.header-icon {
-    font-size: 6rem;
-    color: #ffd700;
-    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
-    margin-bottom: 4rem;
-}
-
-.leaderboard-header-section h1 {
-    font-family: var(--font-heading);
-    font-size: clamp(3rem, 10vw, 7rem);
-    margin-bottom: 3rem;
-    line-height: 1;
-}
-
-.leaderboard-header-section p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    max-width: 600px;
-}
-
-.leaderboard-content-section {
+/* ══════════ HERO SECTION ══════════ */
+.leaderboard-hero-section {
     width: 100vw;
     height: 100vh;
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    padding: 0 10vw;
-    background: #000;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
     scroll-snap-align: start;
 }
 
-.leaderboard-list {
-    display: flex;
-    gap: 3vw;
-    width: 100%;
-    overflow-x: auto;
-    padding: 5vh 0;
-    scroll-behavior: smooth;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.leaderboard-list::-webkit-scrollbar {
-    display: none;
-}
-
-.leader-item {
-    width: 420px;
-    height: 580px;
-
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 40px;
-    display: flex;
-    flex-direction: column;
-    padding: 3.5rem;
-    position: relative;
-    transition: all 0.7s var(--transition, cubic-bezier(0.22, 1, 0.36, 1));
-    overflow-y: auto;
-}
-
-.leader-item:hover {
-    transform: translateY(-20px) scale(1.02);
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
-}
-
-/* 🏆 Top 3 Special Effects */
-.leader-item:nth-child(1) {
-    border-color: rgba(255, 215, 0, 0.3);
-    background: linear-gradient(145deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0.8));
-}
-
-.leader-item:nth-child(1):hover {
-    border-color: #ffd700;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
-}
-
-.leader-item:nth-child(2) {
-    border-color: rgba(192, 192, 192, 0.3);
-    background: linear-gradient(145deg, rgba(192, 192, 192, 0.05), rgba(0, 0, 0, 0.8));
-}
-
-.leader-item:nth-child(3) {
-    border-color: rgba(205, 127, 50, 0.3);
-    background: linear-gradient(145deg, rgba(205, 127, 50, 0.05), rgba(0, 0, 0, 0.8));
-}
-
-/* Floating Rank Badge */
-.rank {
-    font-family: var(--font-heading);
-    font-size: 6rem;
-    font-weight: 900;
-    color: rgba(255, 255, 255, 0.03);
+.hero-glow {
     position: absolute;
-    top: -10px;
-    right: 20px;
-    transition: all 0.5s ease;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: glowPulse 4s ease-in-out infinite;
 }
 
-.leader-item:hover .rank {
-    color: rgba(255, 255, 255, 0.1);
-    transform: translateY(10px);
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.15);
+    }
 }
 
-.user {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5rem;
-    flex: 1;
-    justify-content: center;
+.hero-content {
+    text-align: center;
     z-index: 2;
 }
 
-.leader-avatar,
-.avatar-placeholder {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    object-fit: cover;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.hero-trophy {
+    font-size: 5rem;
+    color: #ffd700;
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.5));
+    margin-bottom: 2rem;
+    animation: trophyFloat 3s ease-in-out infinite;
 }
 
-.leader-item:hover .leader-avatar {
-    transform: scale(1.1) rotate(5deg);
-    border-color: var(--accent-cyan);
+@keyframes trophyFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
-.leader-name {
-    font-family: var(--font-heading);
-    font-size: 1.4rem;
-    text-align: center;
-    color: #fff;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-}
-
-.points {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    font-size: 1.8rem;
+.hero-content h1 {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: clamp(3rem, 8vw, 6rem);
     font-weight: 900;
     color: #fff;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.hero-content h1 span {
+    background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+}
+
+/* ══════════ PODIUM SECTION ══════════ */
+.leaderboard-podium-section {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    padding-top: 2rem;
+    padding: 2rem 4vw;
+    scroll-snap-align: start;
+    position: relative;
+}
+
+.podium-container {
     width: 100%;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.02), transparent);
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
 }
 
-.points svg {
+.section-title {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+/* ══════════ PODIUM GRID (2nd, 1st, 3rd) ══════════ */
+.podium-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+    align-items: flex-end;
+}
+
+/* ══════════ PODIUM CARDS ══════════ */
+.podium-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem 2rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+    min-height: 260px;
+}
+
+/* Champion card (1st place) */
+.podium-card.champion {
+    min-height: 320px;
+    padding: 2.5rem 1.5rem 2.5rem;
+    background: linear-gradient(170deg, rgba(255, 215, 0, 0.06) 0%, rgba(0, 0, 0, 0.9) 60%);
+    border-color: rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.05);
+}
+
+/* Gold card styling */
+.podium-card.gold {
+    border-color: rgba(255, 215, 0, 0.2);
+    background: linear-gradient(170deg, rgba(255, 215, 0, 0.06) 0%, rgba(0, 0, 0, 0.9) 60%);
+}
+
+.podium-card.gold:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15);
+}
+
+/* Silver card styling */
+.podium-card.silver {
+    border-color: rgba(192, 192, 192, 0.15);
+    background: linear-gradient(170deg, rgba(192, 192, 192, 0.04) 0%, rgba(0, 0, 0, 0.9) 60%);
+}
+
+.podium-card.silver:hover {
+    border-color: rgba(192, 192, 192, 0.4);
+    box-shadow: 0 20px 60px rgba(192, 192, 192, 0.1);
+}
+
+/* Bronze card styling */
+.podium-card.bronze {
+    border-color: rgba(205, 127, 50, 0.15);
+    background: linear-gradient(170deg, rgba(205, 127, 50, 0.04) 0%, rgba(0, 0, 0, 0.9) 60%);
+}
+
+.podium-card.bronze:hover {
+    border-color: rgba(205, 127, 50, 0.4);
+    box-shadow: 0 20px 60px rgba(205, 127, 50, 0.1);
+}
+
+/* ══════════ RANK BADGE ══════════ */
+.podium-rank-badge {
+    margin-bottom: 1rem;
+}
+
+.medal-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 15px currentColor);
+}
+
+.medal-icon.gold {
     color: #ffd700;
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    font-size: 2.5rem;
 }
 
-/* ================ RESPONSIVE ================ */
+.medal-icon.silver {
+    color: #c0c0c0;
+}
+
+.medal-icon.bronze {
+    color: #cd7f32;
+}
+
+.rank-number {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.15);
+}
+
+/* ══════════ AVATAR ══════════ */
+.podium-avatar-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    padding: 3px;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.podium-avatar-wrap.gold {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    width: 100px;
+    height: 100px;
+}
+
+.podium-avatar-wrap.silver {
+    background: linear-gradient(135deg, #e0e0e0, #8e8e8e);
+}
+
+.podium-avatar-wrap.bronze {
+    background: linear-gradient(135deg, #cd7f32, #8b4513);
+}
+
+.podium-card:hover .podium-avatar-wrap {
+    transform: scale(1.1);
+}
+
+.podium-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.podium-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.champion .podium-avatar-fallback {
+    font-size: 2.2rem;
+}
+
+/* ══════════ NAME & POINTS ══════════ */
+.podium-name {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: 0.85rem;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.champion .podium-name {
+    font-size: 1rem;
+}
+
+.podium-points {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.podium-points span {
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.champion .podium-points span {
+    font-size: 1.5rem;
+}
+
+.podium-points small {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.star-icon {
+    color: #ffd700;
+    font-size: 0.9rem;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+}
+
+/* ══════════ 4TH & 5TH PLACE (RUNNERS UP) ══════════ */
+.runners-up {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.runner-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+}
+
+.runner-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(8px);
+}
+
+.runner-rank {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.12);
+    min-width: 30px;
+}
+
+.runner-avatar-wrap {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.runner-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.runner-avatar-fallback {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.15);
+}
+
+.runner-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.runner-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.runner-points {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.runner-points svg {
+    color: #ffd700;
+    font-size: 0.65rem;
+}
+
+.runner-trend {
+    color: rgba(0, 242, 254, 0.3);
+    font-size: 0.8rem;
+}
+
+/* ══════════ LOADING ══════════ */
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-state h3 {
+    font-family: var(--font-heading, 'Michroma', sans-serif);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.5em;
+    animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
     .leaderboard-page {
         flex-direction: column;
@@ -190,107 +458,182 @@
         height: auto;
     }
 
-    .leaderboard-header-section,
-    .leaderboard-content-section {
+    .leaderboard-hero-section {
         width: 100%;
         height: auto;
-        min-height: auto;
+        min-height: 50vh;
         flex-shrink: unset;
         scroll-snap-align: none;
-        padding: 6rem 6vw 3rem;
+        padding: 6rem 4vw 3rem;
     }
 
-    .leaderboard-header-section {
-        min-height: 60vh;
-    }
-
-    .header-icon {
-        font-size: 4rem;
-        margin-bottom: 2rem;
-    }
-
-    .leaderboard-header-section h1 {
-        margin-bottom: 2rem;
-    }
-
-    .leaderboard-list {
-        flex-direction: column;
-        width: 100%;
-        overflow-x: visible;
-        padding: 2rem 0;
-    }
-
-    .leader-item {
+    .leaderboard-podium-section {
         width: 100%;
         height: auto;
-        padding: 2.5rem;
-        min-height: 350px;
+        flex-shrink: unset;
+        scroll-snap-align: none;
+        padding: 3rem 4vw 4rem;
     }
 
-    .rank {
-        font-size: 3rem;
+    .podium-grid {
+        gap: 1rem;
+    }
+
+    .podium-card {
+        min-height: 220px;
+        padding: 1.5rem 1rem;
+    }
+
+    .podium-card.champion {
+        min-height: 270px;
     }
 }
 
 @media (max-width: 768px) {
-
-    .leaderboard-header-section,
-    .leaderboard-content-section {
-        padding: 5rem 5vw 2rem;
-    }
-
-    .header-icon {
-        font-size: 3rem;
+    .hero-trophy {
+        font-size: 3.5rem;
         margin-bottom: 1.5rem;
     }
 
-    .leaderboard-header-section p {
-        font-size: 0.9rem;
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content p {
+        font-size: 0.85rem;
         letter-spacing: 0.15em;
     }
 
-    .leader-item {
-        padding: 2rem;
-        min-height: 300px;
+    .hero-glow {
+        width: 350px;
+        height: 350px;
     }
 
-    .leader-avatar,
-    .avatar-placeholder {
-        width: 80px;
-        height: 80px;
+    .podium-grid {
+        grid-template-columns: 1fr 1.3fr 1fr;
+        gap: 0.6rem;
     }
 
-    .avatar-placeholder {
-        font-size: 2rem;
+    .podium-card {
+        padding: 1.2rem 0.8rem;
+        border-radius: 18px;
+        min-height: 190px;
     }
 
-    .leader-name {
-        font-size: 0.9rem;
+    .podium-card.champion {
+        min-height: 240px;
     }
 
-    .points {
+    .podium-avatar-wrap {
+        width: 56px;
+        height: 56px;
+    }
+
+    .podium-avatar-wrap.gold {
+        width: 70px;
+        height: 70px;
+    }
+
+    .podium-name {
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+    }
+
+    .champion .podium-name {
+        font-size: 0.75rem;
+    }
+
+    .podium-points span {
+        font-size: 1rem;
+    }
+
+    .champion .podium-points span {
         font-size: 1.2rem;
-        padding-top: 1.5rem;
+    }
+
+    .medal-icon {
+        font-size: 1.5rem;
+    }
+
+    .medal-icon.gold {
+        font-size: 1.8rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+
+    .runner-card {
+        padding: 0.8rem 1rem;
     }
 }
 
 @media (max-width: 480px) {
-    .leader-item {
-        padding: 1.5rem;
-        min-height: 250px;
+    .leaderboard-hero-section {
+        padding: 5rem 5vw 2rem;
+        min-height: 40vh;
     }
 
-    .rank {
-        font-size: 2.5rem;
+    .leaderboard-podium-section {
+        padding: 2rem 3vw 3rem;
     }
 
-    .user {
-        gap: 1.5rem;
+    .hero-trophy {
+        font-size: 2.8rem;
     }
 
-    .leader-avatar,
-    .avatar-placeholder {
-        width: 64px;
-        height: 64px;
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .podium-card {
+        padding: 1rem 0.6rem;
+        border-radius: 14px;
+        min-height: 170px;
+    }
+
+    .podium-card.champion {
+        min-height: 210px;
+    }
+
+    .podium-avatar-wrap {
+        width: 44px;
+        height: 44px;
+    }
+
+    .podium-avatar-wrap.gold {
+        width: 56px;
+        height: 56px;
+    }
+
+    .podium-avatar-fallback {
+        font-size: 1.2rem;
+    }
+
+    .podium-name {
+        font-size: 0.6rem;
+    }
+
+    .podium-points {
+        padding: 0.4rem 0.8rem;
+    }
+
+    .podium-points span {
+        font-size: 0.9rem;
+    }
+
+    .podium-points small {
+        font-size: 0.6rem;
+    }
+
+    .runner-avatar,
+    .runner-avatar-fallback,
+    .runner-avatar-wrap {
+        width: 36px;
+        height: 36px;
+    }
+
+    .runner-name {
+        font-size: 0.8rem;
     }
 }
