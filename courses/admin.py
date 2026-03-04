@@ -23,7 +23,6 @@ class AssignmentInline(admin.StackedInline):
 
 
 class LessonQuizInline(admin.TabularInline):
-    """Inline formset for adding quiz questions to a lesson"""
     model = LessonQuiz
     extra = 1
     min_num = 0
@@ -56,7 +55,6 @@ class LessonAdmin(admin.ModelAdmin):
     )
     
     def has_test(self, obj):
-        """Display if lesson has test questions or test file"""
         if obj.id:
             has_questions = obj.quiz_questions.exists()
             has_file = bool(obj.test_file)
@@ -72,17 +70,14 @@ class LessonAdmin(admin.ModelAdmin):
     has_test.short_description = 'Test'
     
     def save_model(self, request, obj, form, change):
-        """Custom validation to ensure test exists"""
         super().save_model(request, obj, form, change)
     
     def save_formset(self, request, form, formset, change):
-        """Save the formset and validate test requirement"""
         instances = formset.save(commit=False)
         for instance in instances:
             instance.save()
         formset.save_m2m()
         
-        # After saving, validate that lesson has test
         lesson = form.instance
         has_quiz_questions = lesson.quiz_questions.exists()
         has_test_file = bool(lesson.test_file)
@@ -125,7 +120,6 @@ class LessonLikeAdmin(admin.ModelAdmin):
 
 @admin.register(LessonQuiz)
 class LessonQuizAdmin(admin.ModelAdmin):
-    """Standalone admin for quiz questions"""
     list_display = ['lesson', 'question_text_short', 'correct_answer', 'order', 'created_at']
     list_filter = ['lesson', 'correct_answer', 'created_at']
     search_fields = ['lesson__title', 'question_text']

@@ -45,7 +45,6 @@ def leaderboard(request):
 
 @login_required
 def notifications_view(request):
-    """View all notifications for the user"""
     notifications = Notification.objects.filter(user=request.user)
     notifications.filter(is_read=False).update(is_read=True)
     return render(request, 'core/notifications.html', {'notifications': notifications})
@@ -61,7 +60,6 @@ def mark_notification_read(request, notification_id):
 
 @csrf_exempt
 def api_stats(request):
-    """API endpoint for platform statistics"""
     return JsonResponse({
         'status': 'success',
         'stats': {
@@ -72,11 +70,6 @@ def api_stats(request):
             'certificates': Certificate.objects.count(),
         }
     })
-
-
-# ============================================================
-# VIOLATION DETECTION KEYWORDS — serverda qo'shimcha filtr
-# ============================================================
 VIOLATION_KEYWORDS = {
     'hacking': [
         'hack', 'crack', 'exploit', 'vulnerability', 'ddos', 'dos attack',
@@ -108,12 +101,10 @@ VIOLATION_KEYWORDS = {
 
 
 def detect_violation(text):
-    """Matnda qoidabuzarlik borligini aniqlash"""
     lower = text.lower()
     for v_type, keywords in VIOLATION_KEYWORDS.items():
         for kw in keywords:
             if kw in lower:
-                # Severity aniqlash
                 if v_type in ('hacking', 'violence', 'adult'):
                     severity = 'high'
                 elif v_type in ('harassment', 'harmful'):
@@ -125,10 +116,8 @@ def detect_violation(text):
 
 
 def log_violation(user, user_email, user_message, ai_response, violation_type, severity, ip, user_agent):
-    """Qoidabuzarlikni bazaga yozish va ChatBotAccess'ni yangilash"""
     from django.utils import timezone
 
-    # Violation log yaratish
     ChatViolation.objects.create(
         user=user,
         user_email=user_email,
@@ -140,7 +129,6 @@ def log_violation(user, user_email, user_message, ai_response, violation_type, s
         user_agent=user_agent,
     )
 
-    # Foydalanuvchi mavjud bo'lsa, violation countni oshirish
     if user:
         access, created = ChatBotAccess.objects.get_or_create(
             user=user,
@@ -154,7 +142,6 @@ def log_violation(user, user_email, user_message, ai_response, violation_type, s
             access.last_violation_at = timezone.now()
             access.save(update_fields=['violation_count', 'last_violation_at'])
 
-        # Auto-block: 5 ta qoidabuzarlikdan keyin avtomatik 24 soatlik blok
         if access.violation_count >= 5 and access.block_type == 'none':
             from datetime import timedelta
             access.block_type = 'temporary'
@@ -165,7 +152,6 @@ def log_violation(user, user_email, user_message, ai_response, violation_type, s
 
 @csrf_exempt
 def ai_chat(request):
-    """AI Chat proxy endpoint — calls OpenRouter API from server side"""
     import requests as req
     import json
     import logging
@@ -177,15 +163,12 @@ def ai_chat(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST only'}, status=405)
 
-    # --- Request size limit (max 50KB) ---
     if len(request.body) > 51200:
         return JsonResponse({'error': "So'rov hajmi juda katta."}, status=413)
 
-    # --- IP va User Agent olish ---
     ip = request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0].strip() or request.META.get('REMOTE_ADDR', '0.0.0.0')
     user_agent = request.META.get('HTTP_USER_AGENT', '')
 
-    # --- IP-based rate limiting (max 15 requests per minute) ---
     rate_key = f'ai_chat_rate_{ip}'
     ai_requests = cache.get(rate_key, 0)
     if ai_requests >= 15:
@@ -193,11 +176,9 @@ def ai_chat(request):
         return JsonResponse({'error': "Juda ko'p so'rov. 1 daqiqa kutib turing."}, status=429)
     cache.set(rate_key, ai_requests + 1, 60)
 
-    # --- Foydalanuvchi aniqlash ---
     current_user = request.user if request.user.is_authenticated else None
     user_email = current_user.email if current_user else f'anonymous_{ip}'
 
-    # --- ChatBot blok tekshiruvi ---
     if current_user:
         try:
             access = ChatBotAccess.objects.get(user=current_user)
@@ -223,18 +204,15 @@ def ai_chat(request):
         if not messages:
             return JsonResponse({'error': 'No messages provided'}, status=400)
 
-        # --- Message count limit (max 20 messages in conversation) ---
         if len(messages) > 20:
             messages = messages[-20:]
 
-        # --- Oxirgi xabarni tekshirish (user so'rovi) ---
         last_user_message = ''
         for msg in reversed(messages):
             if msg.get('role') == 'user':
                 last_user_message = msg.get('content', '')
                 break
 
-        # --- SERVER-SIDE VIOLATION CHECK ---
         violation_type, severity, matched_keyword = detect_violation(last_user_message)
         if violation_type:
             refusal_msg = (
@@ -243,7 +221,6 @@ def ai_chat(request):
                 "Iltimos, ta'limga oid savol bering!"
             )
 
-            # Logga yozish
             log_violation(
                 user=current_user,
                 user_email=user_email,
@@ -267,7 +244,6 @@ def ai_chat(request):
                 'violation': True,
             })
 
-        # --- Sanitize messages ---
         sanitized_messages = []
         for msg in messages:
             role = msg.get('role', 'user')
@@ -345,7 +321,6 @@ def ai_chat(request):
 
         data = response.json()
 
-        # Check for API error response
         if response.status_code != 200:
             error_msg = data.get('error', {})
             if isinstance(error_msg, dict):
@@ -359,14 +334,11 @@ def ai_chat(request):
         if 'choices' in data and data['choices']:
             content = data['choices'][0].get('message', {}).get('content', '')
 
-            # AI javobida ham "ta'limga oid emas" yoki rad etish borligini tekshirish
-            # Agar AI o'zi rad etgan bo'lsa, buni ham log qilish
             refusal_indicators = [
                 'javob bera olmayman', 'rad etaman', 'ta\'limga oid emas',
                 'yordam bera olmayman', 'man etilgan',
             ]
             if any(indicator in content.lower() for indicator in refusal_indicators):
-                # AI o'zi rad etdi — violation sifatida log qilish
                 log_violation(
                     user=current_user,
                     user_email=user_email,

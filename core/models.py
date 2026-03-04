@@ -44,8 +44,8 @@ class UserActivityLog(models.Model):
     )
     activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    user_agent = models.TextField(null=True, blank=True)  # Browser va qurilma ma'lumotlari
-    device_type = models.CharField(max_length=50, null=True, blank=True)  # mobile, desktop, tablet
+    user_agent = models.TextField(null=True, blank=True)
+    device_type = models.CharField(max_length=50, null=True, blank=True)
     browser = models.CharField(max_length=100, null=True, blank=True)
     os = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
@@ -80,7 +80,7 @@ class IPBlocklist(models.Model):
     reason = models.CharField(max_length=20, choices=BLOCK_REASONS)
     description = models.TextField(null=True, blank=True)
     blocked_at = models.DateTimeField(auto_now_add=True)
-    blocked_until = models.DateTimeField(null=True, blank=True)  # Vaqtinchalik blok uchun
+    blocked_until = models.DateTimeField(null=True, blank=True)
     is_permanent = models.BooleanField(default=False)
     attempt_count = models.IntegerField(default=0)
     last_attempt = models.DateTimeField(null=True, blank=True)
@@ -102,7 +102,6 @@ class IPBlocklist(models.Model):
 
 
 class ChatViolation(models.Model):
-    """Chatbot qoidabuzarlik loglari"""
     VIOLATION_TYPES = [
         ('harmful', 'Zararli kontent so\'rovi'),
         ('violence', 'Zo\'ravonlik'),
@@ -159,7 +158,6 @@ class ChatViolation(models.Model):
 
 
 class ChatBotAccess(models.Model):
-    """Foydalanuvchining chatbot foydalanish huquqi"""
     BLOCK_TYPES = [
         ('none', 'Bloklanmagan'),
         ('temporary', 'Vaqtinchalik bloklangan'),
@@ -201,7 +199,6 @@ class ChatBotAccess(models.Model):
         if self.block_type == 'temporary' and self.blocked_until:
             if self.blocked_until > timezone.now():
                 return True
-            # Vaqt tugagan — avtomatik blokdan chiqarish
             self.block_type = 'none'
             self.blocked_until = None
             self.save(update_fields=['block_type', 'blocked_until'])
@@ -209,7 +206,6 @@ class ChatBotAccess(models.Model):
         return False
 
     def get_remaining_time(self):
-        """Qolgan blok vaqtini qaytaradi"""
         if self.block_type == 'temporary' and self.blocked_until:
             remaining = self.blocked_until - timezone.now()
             if remaining.total_seconds() > 0:

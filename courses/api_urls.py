@@ -7,7 +7,6 @@ from courses.api_views import (
 
 app_name = 'api'
 
-# Create router and register viewsets
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'subcategories', SubCategoryViewSet, basename='subcategory')

@@ -72,11 +72,9 @@ class AdvancedSecurityMiddleware:
         ]
         
     def _is_local_ip(self, ip_address):
-        """Check if IP is localhost or private network"""
         local_ips = ['127.0.0.1', '::1', 'localhost', '0.0.0.0']
         if ip_address in local_ips:
             return True
-        # Private network ranges
         if ip_address and (ip_address.startswith('10.') or 
                           ip_address.startswith('192.168.') or
                           ip_address.startswith('172.')):
@@ -89,7 +87,6 @@ class AdvancedSecurityMiddleware:
         
         ip_address = get_client_ip(request)
         
-        # DEBUG rejimida lokal IP'larni bloklamaslik
         from django.conf import settings
         if settings.DEBUG and self._is_local_ip(ip_address):
             response = self.get_response(request)

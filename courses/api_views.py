@@ -17,19 +17,11 @@ from core.models import Notification
 
 
 class IsSuperUser(BasePermission):
-    """
-    Only allows access to superusers (created via createsuperuser).
-    """
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.is_superuser
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for categories
-    List and retrieve categories with lesson counts
-    Admin can create/update categories
-    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
@@ -49,10 +41,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class SubCategoryViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for sub-categories
-    Admin can create/update sub-categories
-    """
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -66,10 +54,6 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
 
 
 class LessonViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for lessons
-    Supports CRUD operations, filtering, searching, and custom actions
-    """
     queryset = Lesson.objects.select_related('sub_category__category', 'author').prefetch_related('comments', 'liked_by')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['sub_category', 'level', 'author']
@@ -85,11 +69,6 @@ class LessonViewSet(viewsets.ModelViewSet):
         return LessonListSerializer
     
     def get_permissions(self):
-        """
-        Only superusers can create/update/delete lessons.
-        Authenticated users can like, comment, view enrolled/my_lessons.
-        Everyone can view lessons.
-        """
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsSuperUser()]
         elif self.action in ['like', 'add_comment', 'my_lessons', 'enrolled', 'enroll', 'quiz', 'submit_quiz']:
@@ -97,15 +76,12 @@ class LessonViewSet(viewsets.ModelViewSet):
         return [IsAuthenticatedOrReadOnly()]
     
     def perform_create(self, serializer):
-        """Set the author to the current user"""
         serializer.save(author=self.request.user)
     
     @method_decorator(ensure_csrf_cookie)
     def retrieve(self, request, *args, **kwargs):
-        """Increment view count once per session when retrieving a lesson"""
         lesson = self.get_object()
         
-        # Track viewed lessons in session
         viewed_lessons = request.session.get('viewed_lessons', [])
         if lesson.id not in viewed_lessons:
             lesson.views += 1
@@ -117,11 +93,9 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
-        """Like or unlike a lesson"""
         lesson = self.get_object()
         user = request.user
         
-        # Checking if explicit LessonLike join table entry exists
         if lesson.liked_by.filter(user=user).exists():
             lesson.liked_by.filter(user=user).delete()
             lesson.likes = lesson.liked_by.count()
@@ -136,7 +110,6 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def save_lesson(self, request, pk=None):
-        """Bookmark/save a lesson"""
         lesson = self.get_object()
         user = request.user
         
@@ -149,7 +122,6 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def saved(self, request):
-        """Get lessons the current user has saved"""
         lessons = request.user.saved_lessons.all()
         
         page = self.paginate_queryset(lessons)
@@ -162,7 +134,6 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def enroll(self, request, pk=None):
-        """Enroll the current user in a lesson/course"""
         lesson = self.get_object()
         user = request.user
         
@@ -175,47 +146,41 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def update_progress(self, request, pk=None):
-        """Update viewing progress for an enrolled lesson"""
         lesson = self.get_object()
         user = request.user
         
         try:
             enrollment = Enrollment.objects.get(user=user, lesson=lesson)
             current_time = float(request.data.get('current_time', 0))
-            duration = float(request.data.get('duration', 1))  # avoid div by zero
+            duration = float(request.data.get('duration', 1))
             
             progress = (current_time / duration) * 100
             if progress > 100: progress = 100
             
-            # Don't decrease progress if they rewatch
             if progress > enrollment.progress:
                 enrollment.progress = progress
             
             enrollment.last_watched_time = current_time
             
-            # Points and Certificate Logic
             reward_msg = ""
-            # Tier 1: Just started (>0%)
             if enrollment.progress > 0.5 and enrollment.points_tier < 1:
                 user.points += 20
                 enrollment.points_tier = 1
                 reward_msg = "Tabriklaymiz! O'rganishni boshlaganingiz uchun 20 ball berildi! 🌟"
                 user.save(update_fields=['points'])
             
-            # Tier 2: Halfway (>=50%)
             if enrollment.progress >= 50 and enrollment.points_tier < 2:
-                user.points += 20  # Total 40
+                user.points += 20
                 enrollment.points_tier = 2
                 reward_msg = "Ajoyib! Kursning yarmini tugatdingiz. Yana 20 ball qo'shildi! 🚀"
                 user.save(update_fields=['points'])
             
-            # Tier 3: Completion (>=99.5% for near-100 check)
             if enrollment.progress >= 99.5 and enrollment.points_tier < 3:
-                user.points += 20  # Total 60
+                user.points += 20
                 enrollment.points_tier = 3
                 reward_msg = "Siz darsni 100% yakunladingiz! Endi test topshirib sertifikat olishingiz mumkin. 🎉"
                 user.save(update_fields=['points'])
-                enrollment.progress = 100.0 # Force 100%
+                enrollment.progress = 100.0
 
             enrollment.save()
             
@@ -231,20 +196,17 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def quiz(self, request, pk=None):
-        """Get quiz questions for a lesson if progress is 100%"""
         lesson = self.get_object()
         user = request.user
         
         try:
             enrollment = Enrollment.objects.get(user=user, lesson=lesson)
-            # Only staff can skip the 100% check
             if enrollment.progress < 99.9 and not user.is_staff:
                  return Response({'status': 'error', 'message': 'Quiz faqat video 100% koʻrilgandan keyin ochiladi.'}, status=status.HTTP_403_FORBIDDEN)
             
             questions = lesson.quiz_questions.all()
             serializer = LessonQuizSerializer(questions, many=True, context={'request': request})
             
-            # Include test file URL if available
             test_file_url = None
             if lesson.test_file:
                 test_file_url = request.build_absolute_uri(lesson.test_file.url)
@@ -259,10 +221,9 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def submit_quiz(self, request, pk=None):
-        """Submit quiz answers and issue certificate if passed"""
         lesson = self.get_object()
         user = request.user
-        user_answers = request.data.get('answers', {}) # {question_id: 'A'}
+        user_answers = request.data.get('answers', {})
         
         try:
             enrollment = Enrollment.objects.get(user=user, lesson=lesson)
@@ -283,7 +244,6 @@ class LessonViewSet(viewsets.ModelViewSet):
                     correct_count += 1
             
             total = len(questions)
-            # 100% accuracy required
             is_passed = correct_count == total 
             
             QuizAttempt.objects.create(
@@ -300,11 +260,9 @@ class LessonViewSet(viewsets.ModelViewSet):
                 enrollment.quiz_passed = True
                 enrollment.save()
                 
-                # Issue certificate
                 from courses.models import Certificate
                 Certificate.objects.get_or_create(user=user, lesson=lesson)
                 
-                # Award bonus points for quiz
                 user.points += 40 
                 user.save()
                 result_msg = "Tabriklaymiz! Siz barcha savollarga to'g'ri javob berdingiz va Sertifikat sohibi bo'ldingiz! 🎓"
@@ -323,7 +281,6 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['get'])
     def comments(self, request, pk=None):
-        """Get all comments for a lesson"""
         lesson = self.get_object()
         comments = lesson.comments.all().order_by('-created_at')
         serializer = CommentSerializer(comments, many=True, context={'request': request})
@@ -331,7 +288,6 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def add_comment(self, request, pk=None):
-        """Add a comment to a lesson"""
         lesson = self.get_object()
         serializer = CommentSerializer(data=request.data, context={'request': request})
         
@@ -342,21 +298,18 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        """Get featured lessons (most popular)"""
         lessons = self.queryset.order_by('-views', '-likes')[:6]
         serializer = self.get_serializer(lessons, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def trending(self, request):
-        """Get trending lessons (most likes recently)"""
         lessons = self.queryset.order_by('-likes', '-created_at')[:6]
         serializer = self.get_serializer(lessons, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_lessons(self, request):
-        """Get lessons created by the current user"""
         lessons = self.queryset.filter(author=request.user)
         page = self.paginate_queryset(lessons)
         if page is not None:
@@ -367,7 +320,6 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def enrolled(self, request):
-        """Get lessons the current user is enrolled in"""
         enrolled_lesson_ids = Enrollment.objects.filter(user=request.user).values_list('lesson_id', flat=True)
         lessons = self.queryset.filter(id__in=enrolled_lesson_ids)
         
@@ -381,9 +333,6 @@ class LessonViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for lesson comments
-    """
     queryset = Comment.objects.select_related('user', 'lesson').all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -404,7 +353,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             active = False
         else:
             comment.liked_by.add(user)
-            comment.disliked_by.remove(user) # Remove dislike if liking
+            comment.disliked_by.remove(user)
             active = True
             
         return Response({
