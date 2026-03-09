@@ -67,7 +67,7 @@ const HomePage = () => {
         <div className="homepage-horizontal">
             <Helmet>
                 <title>EduShare — Bepul Onlayn Ta'lim Platformasi | edushare.uz</title>
-                <meta name="description" content="EduShare School — O'zbekistondagi bepul onlayn ta'lim platformasi. Dasturlash, matematika, fan, sport va tillar bo'yicha bepul video kurslar. O'quvchilar bir-birlariga o'rgatadi va o'rganadi." />
+                <meta name="description" content="EduShare — O'zbekistondagi bepul onlayn ta'lim platformasi. Dasturlash, fan va sport bo'yicha bepul video kurslar. O'rganing va o'rgating!" />
                 <meta name="keywords" content="EduShare, edushare.uz, bepul kurslar, onlayn ta'lim, dasturlash kurslari, matematika, Ruslan Xusenov, bepul ta'lim platformasi" />
                 <link rel="canonical" href="https://edushare.uz/" />
 
