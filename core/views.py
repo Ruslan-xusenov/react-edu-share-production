@@ -265,57 +265,36 @@ def ai_chat(request):
             }, status=503)
 
         SYSTEM_PROMPT = (
-            "Sen EduShare AI — faqat ta'lim sohasida yordam beradigan yordamchi.\n\n"
-            "SEN FAQAT TA'LIM MAVZULARIGA JAVOB BERASAN. "
-            "Ta'limga oid bo'lmagan HAMMA so'rovlarni rad et.\n\n"
-            "Agar foydalanuvchi salomlashsa (salom, hello, hi, assalomu alaykum va h.k.), "
-            "do'stona javob ber va o'zingni tanishtir.\n\n"
-            "✅ Ruxsat etilgan mavzular (FAQAT ta'lim bilan bog'liq):\n"
-            "- 📚 Ta'lim fanlari: matematika, fizika, kimyo, biologiya, tarix, geografiya, adabiyot\n"
-            "- 🌐 Tillar: ingliz tili, rus tili, o'zbek tili grammatikasi, tarjima\n"
-            "- 💻 Dasturlash va IT: Python, JavaScript, HTML/CSS, algoritm, ma'lumotlar tuzilmasi\n"
-            "- 🔬 Fan va texnika: astronomiya, robototexnika, muhandislik\n"
-            "- 📊 Iqtisod va biznes: marketing, menejment, moliya ASOSLARI\n"
-            "- 🌍 Umumiy bilim: geografiya, ekologiya, fan tarixi\n"
-            "- 📖 Kitob tavsiyalari va o'qish uchun maslahatlar\n\n"
-            "❌ QATTIYAN MAN ETILGAN mavzular (HAR DOIM rad et):\n"
-            "- Zo'ravonlik, qurol-yarog', noqonuniy faoliyat\n"
-            "- Kattalar uchun (18+) kontent\n"
-            "- Hacking, exploit, virus yozish\n"
-            "- Haqorat, irqchilik, diskriminatsiya\n"
-            "- Shaxsiy ma'lumotlarni so'rash yoki tarqatish\n"
-            "- Narkotik moddalar, giyohvand moddalar\n"
-            "- Sport, hazil, musiqa, kino, o'yinlar, pishirish retseptlari, "
-            "sog'liq, psixologiya, munosabatlar — bular ta'lim emas\n"
-            "- Har qanday ta'limga aloqasi bo'lmagan mavzu\n\n"
-            "❌ Man etilgan so'rovga javob berganingda, doimo quyidagicha ayt:\n"
-            "\"⚠️ Kechirasiz, bu ta'lim mavzusiga oid emas. "
-            "Men faqat ta'lim sohasidagi savollarga javob beraman. "
-            "Iltimos, ta'limga oid savol bering!\"\n\n"
-            "Javoblaringni o'zbek tilida, tushunarli va qisqa ber. "
-            "Kerak bo'lsa misollar va tushuntirishlar qo'sh."
+            "Sen EduShare AI nomli aqlli yordamchisan. Toza o'zbek tilida, muloyim va tushunarli javob ber.\n\n"
+            "SENING ASOSIY VAZIFANG: Faqat ta'lim, fan, tillar va texnologiya sohalari bo'yicha savollarga javob berish.\n"
+            "Ruxsat etilgan mavzular: Matematika, Fizika, Kimyo, Biologiya, Tarix, Geografiya, Adabiyot, "
+            "Ingliz, Rus va O'zbek tili grammatikasi, Dasturlash (Python, JS, va h.k.), Robototexnika, Iqtisod.\n\n"
+            "CHEKLOVLAR:\n"
+            "- Agar foydalanuvchi salomlashsa, do'stona alik ol va o'zingni ta'limiy yordamchi deb tanishtir.\n"
+            "- Ta'limga aloqador bo'lmagan (siyosat, sport, o'yin, shaxsiy savollar) so'rovlarga: "
+            "\"Kechirasiz, men faqat ta'lim sohasidagi savollarga javob beraman. Iltimos, ta'limga oid savol bering!\" deb javob ber.\n"
+            "- Hech qachon 18+ kontent, zo'ravonlik yoki hacking haqida ma'lumot berma."
         )
 
         api_messages = [{'role': 'system', 'content': SYSTEM_PROMPT}] + sanitized_messages
 
-        logger.info(f"[AI Chat] Request from {user_email} (IP: {ip}), messages: {len(sanitized_messages)}")
+        logger.info(f"[AI Chat] Request from {user_email} (IP: {ip})")
 
         response = req.post(
             'https://openrouter.ai/api/v1/chat/completions',
             headers={
                 'Authorization': f'Bearer {OPENROUTER_API_KEY}',
                 'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://edushare.uz', # Majburiy
+                'HTTP-Referer': 'https://edushare.uz',
                 'X-Title': 'EduShare AI',
             },
             json={
-                'model': 'openrouter/free',
+                'model': 'meta-llama/llama-3.3-70b-instruct:free',
                 'messages': api_messages,
-                'temperature': 0.7,
+                'temperature': 0.6,
                 'max_tokens': 1024,
-                'reasoning': {'enabled': True},
             },
-            timeout=30,
+            timeout=40,
         )
 
         logger.info(f"[AI Chat] OpenRouter response status: {response.status_code}")
