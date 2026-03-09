@@ -42,7 +42,6 @@ urlpatterns = [
 
     # 📁 Legacy Django Views (Faqat 'reverse' ishlashi uchun qoldirildi)
     path('courses/', include('courses.urls')),
-    path('profile/', include('accounts.urls')),
     path('core/', include('core.urls')),
     
 ]
