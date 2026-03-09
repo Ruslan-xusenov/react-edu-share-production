@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Hls from 'hls.js';
 import {
     FaPlay, FaPause, FaVolumeUp, FaVolumeMute,
     FaExpand, FaCompress
@@ -51,10 +50,11 @@ const VideoPlayer = ({ src, hlsSrc, hlsStatus, poster, onProgress, initialTime =
         initialTimeSet.current = false;
 
         const useHls = hlsSrc && hlsStatus === 'ready';
+        const HlsLib = window.Hls;
 
-        if (useHls && Hls.isSupported()) {
+        if (useHls && HlsLib && HlsLib.isSupported()) {
             // HLS.js ishlatish
-            const hls = new Hls({
+            const hls = new HlsLib({
                 autoStartLoad: true,
                 startLevel: -1, // auto
                 capLevelToPlayerSize: true,
@@ -66,7 +66,7 @@ const VideoPlayer = ({ src, hlsSrc, hlsStatus, poster, onProgress, initialTime =
             hls.loadSource(hlsSrc);
             hls.attachMedia(video);
 
-            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+            hls.on(HlsLib.Events.MANIFEST_PARSED, (event, data) => {
                 const qualityLevels = data.levels.map((l, i) => ({
                     index: i,
                     name: l.height ? `${l.height}p` : `Level ${i}`,
@@ -79,11 +79,11 @@ const VideoPlayer = ({ src, hlsSrc, hlsStatus, poster, onProgress, initialTime =
                 setCurrentLevel(-1); // auto
             });
 
-            hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
+            hls.on(HlsLib.Events.LEVEL_SWITCHED, (event, data) => {
                 setCurrentLevel(hls.autoLevelEnabled ? -1 : data.level);
             });
 
-            hls.on(Hls.Events.ERROR, (event, data) => {
+            hls.on(HlsLib.Events.ERROR, (event, data) => {
                 if (data.fatal) {
                     setVideoError('Video yuklanmadi. Qaytadan urinib ko\'ring.');
                     setIsLoading(false);
