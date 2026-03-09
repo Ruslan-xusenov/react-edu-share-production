@@ -88,6 +88,7 @@ class LessonListSerializer(serializers.ModelSerializer):
     author = UserBasicSerializer(read_only=True)
     thumbnail_url = serializers.SerializerMethodField()
     video_file_url = serializers.SerializerMethodField()
+    hls_url = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
     is_saved = serializers.SerializerMethodField()
@@ -101,6 +102,7 @@ class LessonListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'category', 'sub_category_id', 'author', 
             'thumbnail', 'thumbnail_url', 'video_url', 'video_file', 'video_file_url',
+            'hls_url', 'hls_status',
             'duration', 'level', 'views', 'likes', 'is_liked', 'is_enrolled', 'is_saved', 'progress', 'last_watched_time', 'certificate_id', 'test_file', 'created_at', 'updated_at'
         ]
         
@@ -125,6 +127,14 @@ class LessonListSerializer(serializers.ModelSerializer):
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.video_file.url)
+        return None
+
+    def get_hls_url(self, obj):
+        if obj.hls_status == 'ready' and obj.hls_playlist:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(f'/media/{obj.hls_playlist}')
+            return f'/media/{obj.hls_playlist}'
         return None
         
     def get_is_liked(self, obj):

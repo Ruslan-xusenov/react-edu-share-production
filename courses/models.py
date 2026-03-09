@@ -93,6 +93,23 @@ class Lesson(models.Model):
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # HLS Adaptive Streaming
+    HLS_STATUS_CHOICES = [
+        ('none', 'HLS yo\'q'),
+        ('processing', 'Konvertatsiya jarayonida'),
+        ('ready', 'Tayyor'),
+        ('error', 'Xatolik'),
+    ]
+    hls_playlist = models.CharField(
+        max_length=500, blank=True, null=True,
+        help_text="HLS master.m3u8 fayl yo'li (media/ dan)"
+    )
+    hls_status = models.CharField(
+        max_length=20, choices=HLS_STATUS_CHOICES,
+        default='none',
+        help_text="HLS konvertatsiya holati"
+    )
     
     class Meta:
         ordering = ['-created_at']
@@ -316,6 +333,20 @@ class Enrollment(models.Model):
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+@receiver(post_save, sender=Lesson)
+def trigger_hls_conversion(sender, instance, created, **kwargs):
+    """
+    Lesson video fayli yuklanganida HLS konvertatsiya qilish.
+    Faqat video_file bo'lganda va hls_status 'none' yoki 'error' bo'lganda.
+    """
+    if instance.video_file and instance.hls_status in ('none', 'error'):
+        video_path = instance.video_file.path
+        import os
+        if os.path.exists(video_path):
+            from courses.hls_converter import convert_to_hls_async
+            convert_to_hls_async(instance.id, video_path)
+
 
 @receiver(post_save, sender=Submission)
 def handle_submission_grading(sender, instance, created, **kwargs):

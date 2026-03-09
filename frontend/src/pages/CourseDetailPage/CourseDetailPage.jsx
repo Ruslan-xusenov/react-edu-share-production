@@ -351,6 +351,8 @@ const CourseDetailPage = () => {
                 <VideoPlayer
                     key={`file-${course.id}`}
                     src={course.video_file_url}
+                    hlsSrc={course.hls_url}
+                    hlsStatus={course.hls_status}
                     poster={course.thumbnail_url}
                     onProgress={handleVideoProgress}
                     initialTime={course.last_watched_time || 0}
