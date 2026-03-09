@@ -5,7 +5,8 @@
     overflow-x: hidden;
     overflow-y: auto;
     background: var(--background);
-    padding-top: 1rem;
+    padding-top: 80px;
+    /* navbar balandligi */
     position: relative;
 }
 
@@ -14,6 +15,13 @@
         height: auto;
         min-height: 100vh;
         scroll-snap-align: none;
+        padding-top: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .course-detail-page {
+        padding-top: 60px;
     }
 }
 
