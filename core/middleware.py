@@ -97,14 +97,49 @@ class AdvancedSecurityMiddleware:
                 response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
             return response
         
-        if self.is_ip_blocked(ip_address) or request.COOKIES.get('edu_persistent_block'):
-            # Re-set cookie if it's an IP block but cookie is missing
-            response = self._forbidden_response('Siz bloklangansiz. VPN ishlatishingizning ham foydasi yo\'q!', ip_address)
-            if not request.COOKIES.get('edu_persistent_block'):
-                response.set_cookie('edu_persistent_block', '1', max_age=3600*24*30, httponly=True, samesite='Lax')
+        from django.core import signing
+        
+        # 1. IP yoki Cookie orqali blokni tekshirish
+        is_blocked = self.is_ip_blocked(ip_address)
+        block_cookie = request.COOKIES.get('edu_persistent_block')
+        
+        block_expiry = None
+        if is_blocked:
+            # IP bloklangan bo'lsa, DB-dan vaqtni olamiz
+            block = IPBlocklist.objects.filter(ip_address=ip_address).first()
+            if block and block.blocked_until:
+                block_expiry = block.blocked_until
+        elif block_cookie:
+            # IP bloklanmagan bo'lsa, cookie-dan tekshiramiz (VPN bypass uchun)
+            try:
+                # Cookie-dagi vaqtni o'qiymiz (signed)
+                expiry_str = signing.loads(block_cookie, salt='edu_block')
+                block_expiry = timezone.datetime.fromisoformat(expiry_str)
+                if timezone.is_naive(block_expiry):
+                    block_expiry = timezone.make_aware(block_expiry)
+                
+                # Agar vaqt o'tgan bo'lsa - blok yo'q
+                if block_expiry <= timezone.now():
+                    block_expiry = None
+            except:
+                block_expiry = None
+
+        if block_expiry:
+            # Blok hali faol
+            response = self._forbidden_response('Siz bloklangansiz. VPN ishlatishingizning ham foydasi yo\'q!', ip_address, block_expiry)
+            
+            # Agar cookie yo'q bo'lsa yoki noto'g'ri bo'lsa - yangisini o'rnatamiz
+            current_expiry_signed = signing.dumps(block_expiry.isoformat(), salt='edu_block')
+            if block_cookie != current_expiry_signed:
+                response.set_cookie('edu_persistent_block', current_expiry_signed, max_age=3600*24*30, httponly=True, samesite='Lax')
+            return response
+        elif block_cookie:
+            # Blok muddati bitgan bo'lsa - cookie-ni tozalaymiz
+            response = self.get_response(request)
+            response.delete_cookie('edu_persistent_block')
             return response
         
-        # Stricter VPN/Proxy Detection
+        # 2. Stricter VPN/Proxy Detection
         if self._is_using_vpn_proxy(request):
             log_security_event(
                 'VPN_PROXY_DETECTED',
@@ -233,12 +268,14 @@ class AdvancedSecurityMiddleware:
         
         return False
     
-    def _forbidden_response(self, message, ip_address=None):
+    def _forbidden_response(self, message, ip_address=None, block_until=None):
         safe_message = escape(message)
         remaining_seconds = 0
         
-        # Calculate remaining time if blocked in DB
-        if ip_address:
+        if block_until:
+            remaining = (block_until - timezone.now()).total_seconds()
+            remaining_seconds = int(max(0, remaining))
+        elif ip_address:
             try:
                 block = IPBlocklist.objects.filter(ip_address=ip_address).first()
                 if block and block.blocked_until:
@@ -246,6 +283,9 @@ class AdvancedSecurityMiddleware:
                     remaining_seconds = int(max(0, remaining))
             except:
                 pass
+
+        # Timer bug ni to'g'irlash: agar vaqt 0 bo'lsa, 3600 chiqmasligi kerak
+        js_seconds = remaining_seconds if remaining_seconds > 0 else 0
 
         html = f'''
         <html><head><meta charset="utf-8">
@@ -262,7 +302,7 @@ class AdvancedSecurityMiddleware:
                 <h1>🛑 Kirish taqiqlangan!</h1>
                 <p class="msg">{safe_message}</p>
                 
-                <div class="vpn-msg">VPN ishlatish orqali blokni chetlab o'ta olmaysiz. Qurilmangiz identifikatoriga binoan bloklangansiz.</div>
+                <div class="vpn-msg">Xavfsizlik tizimi sizning harakatingizda xavf sezdi. VPN blokni chetlab o'tishga yordam bermaydi.</div>
                 
                 <div id="countdown-label">Blokdan chiqishga qoldi:</div>
                 <div id="timer" class="timer">00:00:00</div>
@@ -271,10 +311,11 @@ class AdvancedSecurityMiddleware:
             </div>
             
             <script>
-                let seconds = {remaining_seconds or 3600};
+                let seconds = {js_seconds};
                 function updateTimer() {{
                     if (seconds <= 0) {{
-                        document.getElementById('timer').innerHTML = "Qayta yuklang";
+                        document.getElementById('timer').innerHTML = "Blok tugadi";
+                        document.getElementById('countdown-label').innerHTML = "Sahifani yangilang:";
                         return;
                     }}
                     let h = Math.floor(seconds / 3600);
@@ -380,7 +421,11 @@ class AdvancedSecurityMiddleware:
                 block.attempt_count += 1
                 block.last_attempt = timezone.now()
                 
-                if block.attempt_count >= 10: # 3 orni-ga 10 (yumshatildi)
+                # Agar blok muddati bitgan bo'lsa, yangidan 1 soat beramiz
+                if not block.is_active():
+                    block.blocked_until = timezone.now() + timezone.timedelta(hours=1)
+                
+                if block.attempt_count >= 10:
                     block.is_permanent = True
                     block.reason = 'ddos'
                     block.description = 'Avtomatik doimiy blok - DDoS hujum belgisi'
