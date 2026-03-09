@@ -289,9 +289,9 @@ def ai_chat(request):
                 'X-Title': 'EduShare AI',
             },
             json={
-                'model': 'meta-llama/llama-3.3-70b-instruct:free',
+                'model': 'openrouter/free',
                 'messages': api_messages,
-                'temperature': 0.6,
+                'temperature': 0.7,
                 'max_tokens': 1024,
             },
             timeout=40,
