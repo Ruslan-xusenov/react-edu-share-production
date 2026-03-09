@@ -58,8 +58,15 @@ Crawl-delay: 2
 User-agent: Bingbot
 Allow: /
 Allow: /courses
+Allow: /courses/*
 Allow: /about
 Allow: /leaderboard
 Disallow: /api/
 Disallow: /admin/
-Crawl-delay: 1
+Disallow: /accounts/
+Disallow: /login
+Disallow: /signup
+Disallow: /profile
+Disallow: /my-learning
+Disallow: /create-lesson
+Disallow: /certificate/
