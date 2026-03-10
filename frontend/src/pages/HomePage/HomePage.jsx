@@ -70,6 +70,11 @@ const HomePage = () => {
                 <meta name="description" content="EduShare — O'zbekistondagi bepul onlayn ta'lim platformasi. Dasturlash, fan va sport bo'yicha bepul video kurslar. O'rganing va o'rgating!" />
                 <meta name="keywords" content="EduShare, edushare.uz, bepul kurslar, onlayn ta'lim, dasturlash kurslari, matematika, Ruslan Xusenov, bepul ta'lim platformasi" />
                 <link rel="canonical" href="https://edushare.uz/" />
+                <meta property="og:title" content="EduShare School — Bepul Onlayn Ta'lim" />
+                <meta property="og:description" content="O'zbekistondagi bepul onlayn ta'lim platformasi. Dasturlash, fan va sport kurslari." />
+                <meta property="og:url" content="https://edushare.uz/" />
+                <meta property="og:image" content="https://edushare.uz/og-image.jpg" />
+                <meta name="twitter:card" content="summary_large_image" />
 
                 {/* JSON-LD Schema for Google */}
                 <script
@@ -187,9 +192,10 @@ const HomePage = () => {
                             >
                                 <div className="course-image-wrapper">
                                     <img
-                                        src={course.thumbnail_url || `https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=800`}
+                                        src={course.thumbnail_url || `https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=600&q=75`}
                                         alt={course.title}
                                         className="course-image"
+                                        loading="lazy"
                                     />
                                 </div>
                                 <div className="course-info">

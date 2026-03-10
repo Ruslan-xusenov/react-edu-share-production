@@ -37,70 +37,98 @@ const VideoPlayer = ({ src, hlsSrc, hlsStatus, poster, onProgress, initialTime =
         const video = videoRef.current;
         if (!video) return;
 
-        // Cleanup previous HLS instance
-        if (hlsRef.current) {
-            hlsRef.current.destroy();
-            hlsRef.current = null;
-        }
+        let hlsInstance = null;
 
-        setVideoError(null);
-        setIsLoading(true);
-        setLevels([]);
-        setCurrentLevel(-1);
-        initialTimeSet.current = false;
-
-        const useHls = hlsSrc && hlsStatus === 'ready';
-        const HlsLib = window.Hls;
-
-        if (useHls && HlsLib && HlsLib.isSupported()) {
-            // HLS.js ishlatish
-            const hls = new HlsLib({
-                autoStartLoad: true,
-                startLevel: -1, // auto
-                capLevelToPlayerSize: true,
-                maxBufferLength: 30,
-                maxMaxBufferLength: 60,
-            });
-
-            hlsRef.current = hls;
-            hls.loadSource(hlsSrc);
-            hls.attachMedia(video);
-
-            hls.on(HlsLib.Events.MANIFEST_PARSED, (event, data) => {
-                const qualityLevels = data.levels.map((l, i) => ({
-                    index: i,
-                    name: l.height ? `${l.height}p` : `Level ${i}`,
-                    height: l.height || 0,
-                    bitrate: l.bitrate,
-                }));
-                // Kattadan kichikka tartiblash
-                qualityLevels.sort((a, b) => b.height - a.height);
-                setLevels(qualityLevels);
-                setCurrentLevel(-1); // auto
-            });
-
-            hls.on(HlsLib.Events.LEVEL_SWITCHED, (event, data) => {
-                setCurrentLevel(hls.autoLevelEnabled ? -1 : data.level);
-            });
-
-            hls.on(HlsLib.Events.ERROR, (event, data) => {
-                if (data.fatal) {
-                    setVideoError('Video yuklanmadi. Qaytadan urinib ko\'ring.');
-                    setIsLoading(false);
-                }
-            });
-
-        } else if (useHls && video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Safari - native HLS support
-            video.src = hlsSrc;
-        } else if (src) {
-            // Fallback: oddiy video
-            video.src = src;
-        }
-
-        return () => {
+        const initHls = async () => {
+            // Cleanup previous HLS instance
             if (hlsRef.current) {
                 hlsRef.current.destroy();
+                hlsRef.current = null;
+            }
+
+            setVideoError(null);
+            setIsLoading(true);
+            setLevels([]);
+            setCurrentLevel(-1);
+            initialTimeSet.current = false;
+
+            const useHls = hlsSrc && hlsStatus === 'ready';
+            if (!useHls) {
+                if (src) video.src = src;
+                return;
+            }
+
+            // Safari - native HLS support
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = hlsSrc;
+                return;
+            }
+
+            // Load HLS.js dynamically if needed
+            let HlsLib = window.Hls;
+            if (!HlsLib) {
+                try {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js';
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                    HlsLib = window.Hls;
+                } catch (err) {
+                    console.error('Failed to load HLS.js', err);
+                    setVideoError('Video pleerini yuklab bo\'lmadi.');
+                    return;
+                }
+            }
+
+            if (HlsLib && HlsLib.isSupported()) {
+                const hls = new HlsLib({
+                    autoStartLoad: true,
+                    startLevel: -1, // auto
+                    capLevelToPlayerSize: true,
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                });
+
+                hlsRef.current = hls;
+                hlsInstance = hls;
+                hls.loadSource(hlsSrc);
+                hls.attachMedia(video);
+
+                hls.on(HlsLib.Events.MANIFEST_PARSED, (event, data) => {
+                    const qualityLevels = data.levels.map((l, i) => ({
+                        index: i,
+                        name: l.height ? `${l.height}p` : `Level ${i}`,
+                        height: l.height || 0,
+                        bitrate: l.bitrate,
+                    }));
+                    qualityLevels.sort((a, b) => b.height - a.height);
+                    setLevels(qualityLevels);
+                    setCurrentLevel(-1); // auto
+                });
+
+                hls.on(HlsLib.Events.LEVEL_SWITCHED, (event, data) => {
+                    setCurrentLevel(hls.autoLevelEnabled ? -1 : data.level);
+                });
+
+                hls.on(HlsLib.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        setVideoError('Video yuklanmadi. Qaytadan urinib ko\'ring.');
+                        setIsLoading(false);
+                    }
+                });
+            } else if (src) {
+                video.src = src;
+            }
+        };
+
+        initHls();
+
+        return () => {
+            if (hlsInstance) {
+                hlsInstance.destroy();
                 hlsRef.current = null;
             }
         };

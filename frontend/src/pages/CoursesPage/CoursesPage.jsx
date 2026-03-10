@@ -54,10 +54,19 @@ const CoursesPage = () => {
     return (
         <div className="courses-page">
             <Helmet>
-                <title>Bepul Kurslar — EduShare School | Dasturlash, Matematika, Fan</title>
-                <meta name="description" content="EduShare School bepul kurslar katalogi. Dasturlash, matematika, fan, sport, musiqa va tillar bo'yicha bepul video darslar. Hozir boshlang!" />
-                <meta name="keywords" content="bepul kurslar, onlayn darslar, dasturlash, matematika, EduShare kurslar" />
-                <link rel="canonical" href="https://edushare.uz/courses" />
+                <title>
+                    {selectedCategory !== 'all'
+                        ? `${categories.find(c => c.slug === selectedCategory)?.display_name || selectedCategory.toUpperCase()} Kurslari — EduShare`
+                        : "Bepul Kurslar — EduShare School | Dasturlash, Matematika, Fan"}
+                </title>
+                <meta
+                    name="description"
+                    content={selectedCategory !== 'all'
+                        ? `EduShare platformasida ${selectedCategory} bo'yicha bepul video kurslar va darslar. O'rganing va sertifikat oling!`
+                        : "EduShare School bepul kurslar katalogi. Dasturlash, matematika, fan, sport, musiqa va tillar bo'yicha bepul video darslar. Hozir boshlang!"}
+                />
+                <meta name="keywords" content={`bepul kurslar, onlayn darslar, ${selectedCategory !== 'all' ? selectedCategory + ',' : ''} dasturlash, matematika, EduShare kurslar`} />
+                <link rel="canonical" href={`https://edushare.uz/courses${selectedCategory !== 'all' ? '?category=' + selectedCategory : ''}`} />
             </Helmet>
 
             <section className="courses-exploration-section">
@@ -125,7 +134,11 @@ const CoursesPage = () => {
                                         transition={{ delay: i * 0.1 }}
                                     >
                                         <div className="course-image-yt">
-                                            <img src={course.thumbnail_url || `https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=800`} alt={course.title} />
+                                            <img
+                                                src={course.thumbnail_url || `https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=600&q=75`}
+                                                alt={course.title}
+                                                loading="lazy"
+                                            />
                                             <div className="category-tag-yt">{course.category?.display_name || 'GENERAL'}</div>
                                         </div>
                                         <div className="course-info-yt">
