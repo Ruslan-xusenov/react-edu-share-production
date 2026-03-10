@@ -73,7 +73,7 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <motion.div className="footer-links-section" variants={itemVariants}>
-                        <h4 className="footer-heading">Tezkor Havolalar</h4>
+                        <h3 className="footer-heading">Tezkor Havolalar</h3>
                         <ul className="footer-links">
                             <li><Link to="/">Bosh Sahifa</Link></li>
                             <li><Link to="/courses">Kurslar</Link></li>
@@ -85,7 +85,7 @@ const Footer = () => {
 
                     {/* Categories */}
                     <motion.div className="footer-links-section" variants={itemVariants}>
-                        <h4 className="footer-heading">Kategoriyalar</h4>
+                        <h3 className="footer-heading">Kategoriyalar</h3>
                         <ul className="footer-links">
                             <li><Link to="/courses?category=programming">Dasturlash</Link></li>
                             <li><Link to="/courses?category=math">Matematika</Link></li>
@@ -96,7 +96,7 @@ const Footer = () => {
 
                     {/* Contact */}
                     <motion.div className="footer-links-section" variants={itemVariants}>
-                        <h4 className="footer-heading">Bog'lanish</h4>
+                        <h3 className="footer-heading">Bog'lanish</h3>
                         <ul className="footer-contact">
                             <li>
                                 <FaEnvelope className="contact-icon" />

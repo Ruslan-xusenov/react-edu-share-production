@@ -95,7 +95,7 @@ const AboutPage = () => {
             <section className="mission-section">
                 <div className="mission-grid">
                     <div className="mission-image">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="Mission" />
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=500&fit=crop&q=75" alt="Mission" width="800" height="500" loading="lazy" />
                     </div>
                     <div className="mission-content">
                         <h2>THE MISSION.</h2>
@@ -139,9 +139,11 @@ const AboutPage = () => {
                             <div key={i} className="team-card">
                                 <div className="team-image">
                                     <img
-                                        src={m.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop'}
+                                        src={m.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=75'}
                                         alt={m.name}
                                         loading="lazy"
+                                        width="400"
+                                        height="400"
                                     />
                                 </div>
                                 <div className="team-content">
