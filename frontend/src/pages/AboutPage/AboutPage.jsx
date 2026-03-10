@@ -11,6 +11,16 @@ import Footer from '../../components/Footer/Footer';
 import './AboutPage.css';
 
 const AboutPage = () => {
+    const fadeIn = {
+        initial: { opacity: 0, y: 30 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.8, ease: "easeOut" }
+    };
+
+    const staggerContainer = {
+        animate: { transition: { staggerChildren: 0.1 } }
+    };
+
     const [stats, setStats] = useState({
         students: 2500,
         courses: 120,
@@ -87,67 +97,104 @@ const AboutPage = () => {
             </Helmet>
 
             <section className="about-hero">
-                <div className="hero-content">
-                    <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }}>THE MANIFESTO.</motion.h1>
+                <motion.div
+                    className="hero-content"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <motion.h1>THE MANIFESTO.</motion.h1>
                     <p className="hero-description">
                         EduShare exists to decentralize knowledge. We believe the best way to learn is to teach,
                         and the best way to grow is to share.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             <section className="mission-section">
                 <div className="mission-grid">
-                    <div className="mission-image">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=500&fit=crop&q=75" alt="Mission" width="800" height="500" loading="lazy" />
-                    </div>
-                    <div className="mission-content">
+                    <motion.div
+                        className="mission-image"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1 }}
+                        viewport={{ once: true }}
+                    >
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=800&fit=crop&q=80" alt="Mission" width="1200" height="800" loading="lazy" />
+                    </motion.div>
+                    <motion.div
+                        className="mission-content"
+                        initial="initial"
+                        whileInView="animate"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                    >
                         <h2>THE MISSION.</h2>
                         <p className="mission-text">
                             To create a global autonomous network of peer learners.
                             Shared knowledge is accelerated progress.
                         </p>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
             <section className="values-section">
-                <div className="values-grid">
+                <motion.div
+                    className="values-grid"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                >
                     {values.map((v, i) => (
-                        <div key={i} className="value-card">
+                        <motion.div key={i} className="value-card" variants={fadeIn}>
                             <div className="value-icon">{v.icon}</div>
                             <h3>{v.title}</h3>
                             <p>{v.description}</p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </section>
 
             <section className="achievements-section">
-                <div className="achievements-grid">
-                    <div className="achievement-card">
+                <motion.div
+                    className="achievements-grid"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                >
+                    <motion.div className="achievement-card" variants={fadeIn}>
                         <div className="achievement-number">{stats.students}</div>
                         <div className="achievement-label">ARCHITECTS</div>
-                    </div>
-                    <div className="achievement-card">
+                    </motion.div>
+                    <motion.div className="achievement-card" variants={fadeIn}>
                         <div className="achievement-number">{stats.courses}</div>
                         <div className="achievement-label">MODULES</div>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </section>
 
             {team.length > 0 && (
                 <section className="team-section">
-                    <div className="team-grid" ref={teamScrollRef}>
+                    <motion.div
+                        className="team-grid"
+                        ref={teamScrollRef}
+                        initial="initial"
+                        whileInView="animate"
+                        viewport={{ once: true }}
+                        variants={staggerContainer}
+                    >
                         {team.map((m, i) => (
-                            <div key={i} className="team-card">
+                            <motion.div key={i} className="team-card" variants={fadeIn}>
                                 <div className="team-image">
                                     <img
-                                        src={m.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&q=75'}
+                                        src={m.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop&q=80'}
                                         alt={m.name}
                                         loading="lazy"
-                                        width="400"
-                                        height="400"
+                                        width="800"
+                                        height="800"
                                     />
                                 </div>
                                 <div className="team-content">
@@ -155,18 +202,25 @@ const AboutPage = () => {
                                     <div className="team-role">{m.role}</div>
                                     <p>{m.bio}</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </section>
             )}
             <section className="about-cta">
-                <div className="cta-content" style={{ textAlign: 'center' }}>
+                <motion.div
+                    className="cta-content"
+                    style={{ textAlign: 'center' }}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
                     <h2>JOIN THE <br /> <span className="cta-highlight">COLLECTIVE.</span></h2>
                     <div className="hero-actions" style={{ marginTop: '4rem' }}>
                         <a href="/signup" className="btn btn-primary">INITIALIZE ACCOUNT</a>
                     </div>
-                </div>
+                </motion.div>
             </section>
 
             {/* FOOTER - Final Section */}
