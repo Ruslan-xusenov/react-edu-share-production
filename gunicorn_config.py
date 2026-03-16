@@ -46,7 +46,3 @@ tmp_upload_dir = None
 
 # Pre-load app before forking workers (shares memory via CoW, saves RAM)
 preload_app = True
-
-# ── SSL (agar Nginx ishlatmasangiz) ───────────────────────────────────────
-# keyfile  = '/path/to/keyfile'
-# certfile = '/path/to/certfile'
