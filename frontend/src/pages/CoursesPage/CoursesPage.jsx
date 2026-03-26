@@ -112,18 +112,18 @@ const CoursesPage = () => {
         <div className="courses-page">
             <Helmet>
                 <title>
-                    {selectedCategory !== 'all'
-                        ? `${categories.find(c => c.slug === selectedCategory)?.display_name || selectedCategory.toUpperCase()} Kurslari — EduShare`
+                    {selectedCategory
+                        ? `${selectedCategory.display_name || selectedCategory.name} Kurslari — EduShare`
                         : "Bepul Kurslar — EduShare School | Dasturlash, Matematika, Fan"}
                 </title>
                 <meta
                     name="description"
-                    content={selectedCategory !== 'all'
-                        ? `EduShare platformasida ${selectedCategory} bo'yicha bepul video kurslar va darslar. O'rganing va sertifikat oling!`
+                    content={selectedCategory
+                        ? `EduShare platformasida ${selectedCategory.display_name || selectedCategory.name} bo'yicha bepul video kurslar va darslar. O'rganing va sertifikat oling!`
                         : "EduShare School bepul kurslar katalogi. Dasturlash, matematika, fan, sport, musiqa va tillar bo'yicha bepul video darslar. Hozir boshlang!"}
                 />
-                <meta name="keywords" content={`bepul kurslar, onlayn darslar, ${selectedCategory !== 'all' ? selectedCategory + ',' : ''} dasturlash, matematika, EduShare kurslar`} />
-                <link rel="canonical" href={`https://edushare.uz/courses${selectedCategory !== 'all' ? '?category=' + selectedCategory : ''}`} />
+                <meta name="keywords" content={`bepul kurslar, onlayn darslar, ${selectedCategory ? (selectedCategory.display_name || selectedCategory.name) + ',' : ''} dasturlash, matematika, EduShare kurslar`} />
+                <link rel="canonical" href={`https://edushare.uz/courses${selectedCategory ? '?category=' + selectedCategory.slug : ''}`} />
             </Helmet>
 
             <section className="courses-exploration-section">
