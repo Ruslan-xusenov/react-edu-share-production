@@ -108,7 +108,7 @@ const HomePage = () => {
                         className="hero-title"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     >
                         THE FUTURE <br />
                         <span className="hero-gradient-text">OF KNOWLEDGE.</span>
