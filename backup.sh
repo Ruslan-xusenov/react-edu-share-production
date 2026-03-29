@@ -6,14 +6,14 @@
 set -e
 
 # Configuration
-PROJECT_DIR="/home/user/edushare"
-BACKUP_DIR="/home/user/backups/edushare"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKUP_DIR="$PROJECT_DIR/backups"
 DATE=$(date +%Y%m%d_%H%M%S)
 RETENTION_DAYS=30
 
 # Database credentials (from .env)
-DB_NAME="edushare_db"
-DB_USER="edushare_user"
+DB_NAME=$(grep DATABASE_NAME "$PROJECT_DIR/.env" | cut -d '=' -f2 || echo "edushare_db")
+DB_USER=$(grep DATABASE_USER "$PROJECT_DIR/.env" | cut -d '=' -f2 || echo "postgres")
 
 # Colors
 GREEN='\033[0;32m'

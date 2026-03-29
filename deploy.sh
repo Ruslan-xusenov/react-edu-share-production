@@ -10,10 +10,10 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 PROJECT_NAME="edushare"
-PROJECT_DIR="/home/react-edu-share-production"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV_DIR="$PROJECT_DIR/venv"
-USER="www-data"
-GROUP="www-data"
+USER=$(whoami)
+GROUP=$(groups | awk '{print $1}')
 
 print_status() {
     echo -e "${GREEN}✓${NC} $1"
@@ -51,14 +51,21 @@ print_status "Packages installed"
 
 echo ""
 echo "3. Setting up PostgreSQL..."
+# Get DB password from .env if available, otherwise use a safe default OR prompt
+DB_PWD=$(grep DATABASE_PASSWORD "$PROJECT_DIR/.env" | cut -d '=' -f2 || echo "edushare_db_2026")
+DB_NAME=$(grep DATABASE_NAME "$PROJECT_DIR/.env" | cut -d '=' -f2 || echo "edushare_db")
+DB_USER=$(grep DATABASE_USER "$PROJECT_DIR/.env" | cut -d '=' -f2 || echo "postgres")
+
 sudo -u postgres psql << EOF
-CREATE DATABASE edushare_db;
-CREATE USER edushare_user WITH PASSWORD 'CHANGE_THIS_PASSWORD';
-ALTER ROLE edushare_user SET client_encoding TO 'utf8';
-ALTER ROLE edushare_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE edushare_user SET timezone TO 'Asia/Tashkent';
-GRANT ALL PRIVILEGES ON DATABASE edushare_db TO edushare_user;
-\q
+DO \$\$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME') THEN
+        CREATE DATABASE $DB_NAME;
+    END IF;
+END
+\$\$;
+ALTER USER $DB_USER WITH PASSWORD '$DB_PWD';
+GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 EOF
 print_status "PostgreSQL configured"
 

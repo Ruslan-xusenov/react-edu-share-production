@@ -6,12 +6,12 @@ After=network.target
 Type=notify
 User=www-data
 Group=www-data
-WorkingDirectory=/home/react-edu-share-production
-Environment="PATH=/home/react-edu-share-production/venv/bin"
-Environment="DJANGO_SETTINGS_MODULE=edushare_project.settings_production"
-EnvironmentFile=/home/react-edu-share-production/.env.production
-ExecStart=/home/react-edu-share-production/venv/bin/gunicorn \
-    --config /home/react-edu-share-production/gunicorn_config.py \
+WorkingDirectory=/home/kali/Desktop/projects/Django/edushare.uz
+Environment="PATH=/home/kali/Desktop/projects/Django/edushare.uz/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=edushare_project.settings"
+EnvironmentFile=/home/kali/Desktop/projects/Django/edushare.uz/.env
+ExecStart=/home/kali/Desktop/projects/Django/edushare.uz/venv/bin/gunicorn \
+    --config /home/kali/Desktop/projects/Django/edushare.uz/gunicorn_config.py \
     edushare_project.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
