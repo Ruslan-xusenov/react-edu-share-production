@@ -86,3 +86,10 @@ htmlcov/
 # OS
 Thumbs.db
 .DS_Store
+
+# Node / JS
+node_modules/
+package-lock.json
+*.npm-debug.log
+.next/
+dist/

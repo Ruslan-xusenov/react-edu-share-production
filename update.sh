@@ -37,6 +37,8 @@ if [ "$LOCAL" = "$REMOTE" ]; then
 fi
 
 echo -e "${YELLOW}      Yangi o'zgarishlar topildi. Yuklanmoqda...${NC}"
+# Git pull vaqtida untracked fayllar (package-lock.json) bilan xatolik bo'lmasligi uchun tozalash
+git clean -fd package-lock.json 2>/dev/null || true
 git pull origin main
 
 # 2. O'zgargan fayllarni aniqlash
