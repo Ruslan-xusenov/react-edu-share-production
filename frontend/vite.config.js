@@ -6,16 +6,34 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [react()],
-    // 🚀 MUHIM: Serverda build vaqtida '/static/', mahalliy dev-serverda '/' ishlatiladi
     base: isBuild ? '/static/' : '/',
     server: {
       proxy: {
-        // Backend so'rovlarini Django'ga (8000 port) yo'naltirish
-        '/api': 'http://127.0.0.1:8000',
-        '/accounts': 'http://127.0.0.1:8000',
-        '/media': 'http://127.0.0.1:8000',
-        '/edushare-boshqaruv-2026': 'http://127.0.0.1:8000',
-        '/admin': 'http://127.0.0.1:8000',
+        '/api': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '/api'),
+        },
+        '/accounts': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+        '/media': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+        '/edushare-boshqaruv-2026': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+        '/admin': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
+        '/static': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+        },
       }
     },
     build: {
@@ -25,7 +43,6 @@ export default defineConfig(({ command }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            // 🚀 Kutubxonalarni alohida fayllarga bo'lish (Kesh va tezlik uchun)
             'vendor-framer': ['framer-motion'],
             'vendor-icons': ['react-icons', 'react-icons/fa'],
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],

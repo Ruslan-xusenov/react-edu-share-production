@@ -21,6 +21,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
 ALLOWED_API_IPS = os.getenv('ALLOWED_API_IPS', '127.0.0.1').split(',')
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -308,8 +309,8 @@ PERMISSIONS_POLICY = {
     'payment': [],
 }
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB for videos
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 500MB for videos
 
 
 # File upload security
@@ -367,6 +368,109 @@ LOGGING = {
             'propagate': False,
         },
     },
+}
+
+# Jazzmin Admin Configuration
+JAZZMIN_SETTINGS = {
+    "site_title": "EduShare Admin",
+    "site_header": "EduShare",
+    "site_brand": "EduShare Admin",
+    # "site_logo": "static/img/logo.png",
+    "login_logo": None,
+    "login_logo_dark": None,
+    "site_logo_classes": "img-circle",
+    "site_icon": None,
+    "welcome_sign": "EduShare boshqaruv paneliga xush kelibsiz!",
+    "copyright": "EduShare.uz",
+    "search_model": ["accounts.CustomUser"],
+    "user_avatar": "avatar",
+
+    "topmenu_links": [
+        {"name": "Bosh sahifa", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Saytga o'tish", "url": "http://edushare.uz", "new_window": True},
+        {"model": "accounts.CustomUser"},
+    ],
+
+    "usermenu_links": [
+        {"model": "accounts.CustomUser"},
+    ],
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "order_with_respect_to": ["accounts", "courses", "core", "community"],
+
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "accounts.CustomUser": "fas fa-user-graduate",
+        "accounts.PasswordChangeOTP": "fas fa-key",
+        "courses.Category": "fas fa-folder",
+        "courses.SubCategory": "fas fa-folder-open",
+        "courses.SubSubCategory": "fas fa-folder-tree",
+        "courses.Lesson": "fas fa-play-circle",
+        "courses.Certificate": "fas fa-certificate",
+        "courses.LessonLike": "fas fa-heart",
+        "courses.Submission": "fas fa-file-upload",
+        "courses.Assignment": "fas fa-tasks",
+        "courses.LessonQuizQuestion": "fas fa-question-circle",
+        "core.Notification": "fas fa-bell",
+        "core.IPBlocklist": "fas fa-user-slash",
+        "core.AllowedIP": "fas fa-shield-alt",
+        "core.UserActivityLog": "fas fa-history",
+        "core.ChatViolation": "fas fa-exclamation-triangle",
+        "core.ChatBotAccess": "fas fa-robot",
+        "core.TeamMember": "fas fa-user-friends",
+        "community.Article": "fas fa-newspaper",
+        "community.BookReview": "fas fa-book",
+        "community.Announcement": "fas fa-bullhorn",
+        "sites.Site": "fas fa-globe",
+        "socialaccount.SocialAccount": "fas fa-share-alt",
+        "socialaccount.SocialToken": "fas fa-coins",
+        "socialaccount.SocialApp": "fas fa-code",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": True,
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
 }
 
 # Import advanced security settings

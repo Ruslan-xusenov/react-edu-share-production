@@ -336,15 +336,15 @@ const CreateLessonPage = () => {
                                     <input type="url" name="video_url" value={formData.video_url} onChange={handleChange} placeholder="YouTube URL..." />
                                 ) : (
                                     <div className="file-upload-box">
-                                        <input type="file" name="video_file" onChange={handleFileChange} accept="video/*" />
-                                        <label><FaUpload /> {formData.video_file ? formData.video_file.name : 'Video fayl'}</label>
+                                        <input type="file" id="video_file" name="video_file" onChange={handleFileChange} accept="video/*" />
+                                        <label htmlFor="video_file"><FaUpload /> {formData.video_file ? formData.video_file.name : 'Video fayl'}</label>
                                     </div>
                                 )}
                                 <div className="form-group" style={{marginTop:'1.5rem'}}>
                                     <label>Thumbnail</label>
                                     <div className="file-upload-box">
-                                        <input type="file" name="thumbnail" onChange={handleFileChange} accept="image/*" />
-                                        <label><FaImage /> {formData.thumbnail ? formData.thumbnail.name : 'Rasm tanlang'}</label>
+                                        <input type="file" id="thumbnail" name="thumbnail" onChange={handleFileChange} accept="image/*" />
+                                        <label htmlFor="thumbnail"><FaImage /> {formData.thumbnail ? formData.thumbnail.name : 'Rasm tanlang'}</label>
                                     </div>
                                 </div>
                             </div>

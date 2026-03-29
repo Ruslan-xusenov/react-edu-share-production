@@ -5,7 +5,7 @@ const isProduction = window.location.hostname !== 'localhost' && window.location
 const DOMAIN = isProduction ? 'https://edushare.uz' : 'http://localhost:8000';
 
 // API Base URL
-const API_BASE_URL = isProduction ? '/api' : 'http://localhost:8000/api';
+const API_BASE_URL = '/api';
 export const BACKEND_URL = DOMAIN;
 
 // Create axios instance
