@@ -144,107 +144,53 @@ class AdvancedSecurityMiddleware:
             return response
         
         from django.core import signing
+        from core.license_gate import is_license_valid, get_activation_message
         
-        # 1. IP yoki Cookie orqali blokni tekshirish
-        is_blocked = self.is_ip_blocked(ip_address)
-        block_cookie = request.COOKIES.get('edu_persistent_block')
-        
-        block_expiry = None
-        if is_blocked:
-            block = IPBlocklist.objects.filter(ip_address=ip_address).first()
-            if block and block.blocked_until:
-                block_expiry = block.blocked_until
-        elif block_cookie:
-            # IP bloklanmagan bo'lsa, cookie-dan tekshiramiz (VPN bypass uchun)
-            try:
-                # Cookie-dagi vaqtni o'qiymiz (signed)
-                expiry_str = signing.loads(block_cookie, salt='edu_block')
-                block_expiry = timezone.datetime.fromisoformat(expiry_str)
-                if timezone.is_naive(block_expiry):
-                    block_expiry = timezone.make_aware(block_expiry)
-                
-                # Agar vaqt o'tgan bo'lsa - blok yo'q
-                if block_expiry <= timezone.now():
-                    block_expiry = None
-            except:
-                block_expiry = None
-
-        if block_expiry:
-            # Blok hali faol
-            response = self._forbidden_response('Siz bloklangansiz. VPN ishlatishingizning ham foydasi yo\'q!', ip_address, block_expiry)
-            
-            # Agar cookie yo'q bo'lsa yoki noto'g'ri bo'lsa - yangisini o'rnatamiz
-            current_expiry_signed = signing.dumps(block_expiry.isoformat(), salt='edu_block')
-            if block_cookie != current_expiry_signed:
-                response.set_cookie('edu_persistent_block', current_expiry_signed, max_age=3600*24*30, httponly=True, samesite='Lax')
-            return response
-        elif block_cookie:
-            # Blok muddati bitgan bo'lsa - cookie-ni tozalaymiz
-            response = self.get_response(request)
-            response.delete_cookie('edu_persistent_block')
-            return response
-        
-        # 2. Skip expensive CPU checks if recently verified
-        if self._should_skip_security(request, ip_address):
-            response = self.get_response(request)
-            self._set_security_headers(response)
-            return response
-
-        # 3. Relaxed VPN/Proxy Detection to prevent false positives
-        if self._is_using_vpn_proxy(request):
-            log_security_event(
-                'VPN_PROXY_DETECTED',
-                f'VPN/Proxy detected from {ip_address} - Path: {request.path}',
-                'WARNING'
-            )
-        
-        if self._check_sql_injection_attempt(request):
-            log_security_event(
-                'SQL_INJECTION_ATTEMPT',
-                f'SQL injection detected from IP: {ip_address} - Path: {request.path}',
-                'CRITICAL'
-            )
-            from django.conf import settings
-            # 🚀 AVTO-BLOK: SQLi urinishi uchun 365 kunlik blok (DEBUG bo'lmasa)
-            if not settings.DEBUG:
-                self.auto_block_ip(ip_address, 'sql_injection')
-            return self._forbidden_response('Xavfli so\'rov topildi (SQL)')
-        
-        if self._check_xss_attempt(request):
-            log_security_event(
-                'XSS_ATTEMPT',
-                f'XSS attack detected from IP: {ip_address} - Path: {request.path}',
-                'CRITICAL'
-            )
-            from django.conf import settings
-            # 🚀 AVTO-BLOK: XSS hujumi uchun doimiy blok
-            if not settings.DEBUG:
-                self.auto_block_ip(ip_address, 'xss_attack')
-            return self._forbidden_response('Xavfli so\'rov topildi (XSS)')
-        
-        if check_path_traversal(request.path):
-            log_security_event(
-                'PATH_TRAVERSAL_ATTEMPT',
-                f'Path traversal detected from IP: {ip_address} - Path: {request.path}',
-                'CRITICAL'
-            )
-            from django.conf import settings
-            # 🚀 AVTO-BLOK: Path traversal uchun blok
-            if not settings.DEBUG:
-                self.auto_block_ip(ip_address, 'path_traversal')
-            return self._forbidden_response('Xavfli path topildi')
-        
-        if not self.check_rate_limit(ip_address, request.path):
-            self.log_suspicious_activity(ip_address, request, 'rate_limit_exceeded')
+        # 1. Software Activation (Litsenziya) Tekshiruvi
+        if not is_license_valid():
+            msg = get_activation_message()
             return HttpResponse(
-                '<html><head><meta charset="utf-8"><style>body{background:#030308;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;text-align:center;} h1{color:#ff4444;} p{color:rgba(255,255,255,0.7);}</style></head><body>'
-                '<h1>429 Too Many Requests</h1>'
-                '<p>Juda ko\'p so\'rov yuborildi. Iltimos, biroz kutib turing.</p>'
-                '<p><small>1 daqiqa kutib, qaytadan urinib ko\'ring.</small></p>'
-                '</body></html>',
-                status=429,
+                f'<html><head><meta charset="utf-8"><style>'
+                'body{{background:#0d1117;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;text-align:center;}}'
+                '.card{{background:#161b22;padding:40px;border-radius:12px;border:1px solid #30363d;max-width:500px;box-shadow:0 10px 30px rgba(0,0,0,0.5);}}'
+                'h1{{color:#f85149;margin-bottom:20px;}} p{{color:#8b949e;line-height:1.6;}} '
+                '.key{{background:#000;padding:10px;border-radius:6px;font-family:monospace;color:#58a6ff;margin:20px 0;}}'
+                '</style></head><body><div class="card">'
+                f'<h1>{msg["title"]}</h1>'
+                f'<p>{msg["message"]}</p>'
+                f'<div class="key">EDU_LICENSE_KEY topilmadi</div>'
+                f'<p><strong>{msg["contact"]}</strong></p>'
+                '</div></body></html>',
+                status=402, # Payment Required / Activation Required
                 content_type='text/html; charset=utf-8'
             )
+
+        # 2. Xavfsizlik Tekshirishlari (Yumshatilgan variant)
+        # IP yoki Cookie orqali blokni tekshirish
+        is_blocked = self.is_ip_blocked(ip_address)
+        if is_blocked:
+            block = IPBlocklist.objects.filter(ip_address=ip_address).first()
+            if block and block.blocked_until and block.blocked_until > timezone.today():
+                return self._forbidden_response('Kirish taqiqlangan (Security Block)', ip_address, block.blocked_until)
+
+        # Skip expensive checks if verified
+        if self._should_skip_security(request, ip_address):
+            return self.get_response(request)
+
+        # 3. Hujumlarni aniqlash (Lekin avto-blok qilmasdan, faqat 403 beramiz)
+        if self._check_sql_injection_attempt(request):
+            log_security_event('SQL_INJECTION_ATTEMPT', f'IP: {ip_address}', 'WARNING')
+            return self._forbidden_response('Xavfli so\'rov (SQL detected)')
+        
+        if self._check_xss_attempt(request):
+            log_security_event('XSS_ATTEMPT', f'IP: {ip_address}', 'WARNING')
+            return self._forbidden_response('Xavfli so\'rov (XSS detected)')
+        
+        if check_path_traversal(request.path):
+            return self._forbidden_response('Path traversal detected')
+        
+        if not self.check_rate_limit(ip_address, request.path):
+            return HttpResponse('Too many requests', status=429)
         
         response = self.get_response(request)
         
