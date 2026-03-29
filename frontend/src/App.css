@@ -29,11 +29,11 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.main-content::-webkit-scrollbar {
+.main-content.horizontal-mode::-webkit-scrollbar {
   display: none !important;
 }
 
-.main-content {
+.main-content.horizontal-mode {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

@@ -20,9 +20,10 @@ from courses.serializers import (
 from core.models import Notification
 
 
-class IsSuperUser(BasePermission):
+class IsAdminUser(BasePermission):
+    """Allow access to staff or superusers"""
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.is_superuser
+        return request.user and request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
 
 
 # ---------------------------------------------------------------------------
@@ -46,7 +47,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsAuthenticated(), IsSuperUser()]
+            return [IsAuthenticated(), IsAdminUser()]
         return [IsAuthenticatedOrReadOnly()]
 
     @method_decorator(ensure_csrf_cookie)
@@ -57,26 +58,26 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = SubCategory.objects.select_related('category').all()
     serializer_class = SubCategorySerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter] # Added Ordering for consistency
     filterset_fields = ['category']
     search_fields = ['name']
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsAuthenticated(), IsSuperUser()]
+            return [IsAuthenticated(), IsAdminUser()]
         return [IsAuthenticatedOrReadOnly()]
 
 
 class SubSubCategoryViewSet(viewsets.ModelViewSet):
     queryset = SubSubCategory.objects.select_related('sub_category__category').all()
     serializer_class = SubSubCategorySerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['sub_category']
     search_fields = ['name']
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsAuthenticated(), IsSuperUser()]
+            return [IsAuthenticated(), IsAdminUser()]
         return [IsAuthenticatedOrReadOnly()]
 
 
@@ -103,7 +104,7 @@ class LessonViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsSuperUser()]
+            return [IsAdminUser()]
         elif self.action in ['like', 'add_comment', 'my_lessons', 'enrolled', 'enroll', 'quiz', 'submit_quiz']:
             return [IsAuthenticated()]
         return [IsAuthenticatedOrReadOnly()]

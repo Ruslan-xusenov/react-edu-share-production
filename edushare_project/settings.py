@@ -19,6 +19,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+ALLOWED_API_IPS = os.getenv('ALLOWED_API_IPS', '127.0.0.1').split(',')
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,12 +50,14 @@ INSTALLED_APPS = [
     'accounts',
     'courses',
     'core',
+    'community',
     
     # Security
     'axes',
 ]
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',  # 🚀 Kompressiya (JSON hajmini kamaytiradi)
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # CORS himoyasi
@@ -95,16 +98,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'edushare_project.wsgi.application'
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
         'OPTIONS': {
-            'timeout': 20,  # SQLite lock timeout (soniyada)
+            'timeout': 60,  # 🚀 Timoutni oshirish (lock xatolarini oldini olish)
         },
-        'CONN_MAX_AGE': 60,  # Connection pooling (60 soniya)
     }
 }
 

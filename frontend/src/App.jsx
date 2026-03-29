@@ -21,6 +21,12 @@ const MyLearningPage = lazy(() => import('./pages/MyLearningPage/MyLearningPage'
 const CreateLessonPage = lazy(() => import('./pages/CreateLessonPage/CreateLessonPage'));
 const CertificatePage = lazy(() => import('./pages/CertificatePage/CertificatePage'));
 
+// Community Pages
+const BookReviewsPage = lazy(() => import('./pages/BookReviewsPage/BookReviewsPage'));
+const ArticlesPage = lazy(() => import('./pages/ArticlesPage/ArticlesPage'));
+const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage/ArticleDetailPage'));
+const AnnouncementsPage = lazy(() => import('./pages/AnnouncementsPage/AnnouncementsPage'));
+
 // Pages that use horizontal scroll (desktop)
 const HORIZONTAL_ROUTES = ['/', '/about', '/leaderboard'];
 
@@ -235,6 +241,13 @@ function App() {
                 <Route path="/my-learning" element={<PageWrapper><MyLearningPage /></PageWrapper>} />
                 <Route path="/create-lesson" element={<PageWrapper><CreateLessonPage /></PageWrapper>} />
                 <Route path="/certificate/:id" element={<PageWrapper><CertificatePage /></PageWrapper>} />
+                
+                {/* Community Routes */}
+                <Route path="/community/books" element={<PageWrapper><BookReviewsPage /></PageWrapper>} />
+                <Route path="/community/news" element={<PageWrapper><ArticlesPage /></PageWrapper>} />
+                <Route path="/community/articles/:slug" element={<PageWrapper><ArticleDetailPage /></PageWrapper>} />
+                <Route path="/community/events" element={<PageWrapper><AnnouncementsPage /></PageWrapper>} />
+                
                 <Route path="*" element={
                   <PageWrapper>
                     <section className="horizontal-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }} aria-label="404 Sahifa topilmadi">

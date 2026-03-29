@@ -4,14 +4,27 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import timedelta
-from .models import Notification, UserActivityLog, IPBlocklist, ChatViolation, ChatBotAccess, TeamMember
+from .models import Notification, UserActivityLog, IPBlocklist, ChatViolation, ChatBotAccess, TeamMember, AllowedIP
 
 
-@admin.register(TeamMember)
-class TeamMemberAdmin(admin.ModelAdmin):
-    list_display = ['name', 'role', 'order', 'created_at']
-    list_editable = ['order']
-    search_fields = ['name', 'role', 'bio']
+@admin.register(AllowedIP)
+class AllowedIPAdmin(admin.ModelAdmin):
+    list_display = ['ip_address', 'description', 'is_active', 'status_badge', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['ip_address', 'description']
+    list_editable = ['is_active']
+    
+    def status_badge(self, obj):
+        if obj.is_active:
+            return format_html(
+                '<span style="background-color: #28a745; color: white; padding: 3px 10px; '
+                'border-radius: 3px; font-weight: bold;">✅ Ruxsat berilgan</span>'
+            )
+        return format_html(
+            '<span style="background-color: #6c757d; color: white; padding: 3px 10px; '
+            'border-radius: 3px; font-weight: bold;">❌ Taqiqlangan</span>'
+        )
+    status_badge.short_description = 'Holat'
 
 
 @admin.register(Notification)

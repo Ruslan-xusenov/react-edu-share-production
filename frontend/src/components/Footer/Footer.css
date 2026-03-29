@@ -53,9 +53,15 @@
     margin-bottom: 2rem;
 }
 
-.footer-logo-icon {
-    font-size: 2.5rem;
-    color: var(--accent-cyan);
+.footer-logo-img {
+    height: 50px;
+    width: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 216, 255, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.footer-brand:hover .footer-logo-img {
+    transform: scale(1.05);
 }
 
 .footer-logo-name {

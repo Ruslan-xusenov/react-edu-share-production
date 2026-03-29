@@ -17,10 +17,23 @@
     padding: 0 8vw;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     background: radial-gradient(circle at center left, rgba(0, 242, 254, 0.03), transparent 70%);
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), padding 0.8s ease;
+}
+
+.initial-layout .search-side {
+    width: 100%;
+    border-right: none;
+    padding: 0 15vw;
 }
 
 .search-side-content {
     width: 100%;
+    transition: transform 0.8s ease;
+}
+
+.initial-layout .search-side-content {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .search-side h1 {
@@ -225,6 +238,18 @@
     background: #050505;
     overflow-y: auto;
     padding: 8vw 4vw;
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease, transform 0.8s ease;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.initial-layout .results-side {
+    width: 0%;
+    padding: 0;
+    opacity: 0;
+    transform: translateX(100px);
+    pointer-events: none;
+    overflow: hidden;
 }
 
 .results-side::-webkit-scrollbar {

@@ -1,8 +1,8 @@
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseForbidden, HttpResponse, HttpResponseNotFound
 from django.utils import timezone
 from django.core.cache import cache
 from django.utils.html import escape
-from .models import IPBlocklist, UserActivityLog
+from .models import IPBlocklist, UserActivityLog, AllowedIP
 from .security_utils import (
     check_sql_injection, check_xss_attack, 
     check_path_traversal, log_security_event,
@@ -81,13 +81,59 @@ class AdvancedSecurityMiddleware:
             return True
         return False
 
+    def _should_skip_security(self, request, ip_address):
+        """Skip expensive regex checks if the IP was recently verified and path is safe"""
+        if any(request.path.endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.mp4', '.js', '.css']):
+            return True
+            
+        cache_key = f'security_verified_{ip_address}'
+        return cache.get(cache_key) is True
+
+    def _is_api_path(self, path):
+        """Check if path is a protected area (API/Admin)"""
+        # Protect both API root and Admin area
+        from django.conf import settings
+        admin_url = getattr(settings, 'ADMIN_URL', 'admin/')
+        if not admin_url.startswith('/'):
+            admin_url = '/' + admin_url
+            
+        return path.startswith('/api/') or path.startswith(admin_url)
+
     def __call__(self, request):
         if any(request.path.startswith(path) for path in self.exempt_paths):
             return self.get_response(request)
         
         ip_address = get_client_ip(request)
-        
         from django.conf import settings
+        
+        # 🛡️ API/Admin IP restriction (Highest priority)
+        if self._is_api_path(request.path):
+            # 1. Try Cache first
+            cache_key = 'allowed_api_ips_list'
+            allowed_ips = cache.get(cache_key)
+            
+            if allowed_ips is None:
+                # 2. Fetch from DB
+                allowed_ips = list(AllowedIP.objects.filter(is_active=True).values_list('ip_address', flat=True))
+                # 3. Add .env fallbacks if any
+                env_ips = getattr(settings, 'ALLOWED_API_IPS', [])
+                if isinstance(env_ips, list):
+                    allowed_ips.extend(env_ips)
+                # 4. Cache for 5 minutes
+                cache.set(cache_key, allowed_ips, 300)
+
+            if ip_address not in allowed_ips and not self._is_local_ip(ip_address):
+                # Mask as 404 for unauthorized IPs
+                log_security_event(
+                    'UNAUTHORIZED_PROTECTED_ACCESS',
+                    f'Unauthorized access to {request.path} from {ip_address}',
+                    'WARNING'
+                )
+                return HttpResponseNotFound(
+                    '<html><head><title>404 Not Found</title></head>'
+                    '<body><center><h1>404 Not Found</h1></center><hr><center>nginx</center></body></html>'
+                )
+
         if settings.DEBUG and self._is_local_ip(ip_address):
             response = self.get_response(request)
             if hasattr(response, 'headers'):
@@ -138,17 +184,19 @@ class AdvancedSecurityMiddleware:
             response.delete_cookie('edu_persistent_block')
             return response
         
-        # 2. Relaxed VPN/Proxy Detection to prevent false positives
+        # 2. Skip expensive CPU checks if recently verified
+        if self._should_skip_security(request, ip_address):
+            response = self.get_response(request)
+            self._set_security_headers(response)
+            return response
+
+        # 3. Relaxed VPN/Proxy Detection to prevent false positives
         if self._is_using_vpn_proxy(request):
-            # Only block if we're reasonably sure, but for now we'll just log
-            # to avoid blocking legitimate users. 
-            # If the user still wants strict blocking, we should use a proper IP intelligence API.
             log_security_event(
                 'VPN_PROXY_DETECTED',
                 f'VPN/Proxy detected from {ip_address} - Path: {request.path}',
                 'WARNING'
             )
-            # return self._forbidden_response('VPN orqali kirish taqiqlangan!', ip_address)
         
         if self._check_sql_injection_attempt(request):
             log_security_event(
@@ -157,6 +205,7 @@ class AdvancedSecurityMiddleware:
                 'CRITICAL'
             )
             from django.conf import settings
+            # 🚀 AVTO-BLOK: SQLi urinishi uchun 365 kunlik blok (DEBUG bo'lmasa)
             if not settings.DEBUG:
                 self.auto_block_ip(ip_address, 'sql_injection')
             return self._forbidden_response('Xavfli so\'rov topildi (SQL)')
@@ -168,6 +217,7 @@ class AdvancedSecurityMiddleware:
                 'CRITICAL'
             )
             from django.conf import settings
+            # 🚀 AVTO-BLOK: XSS hujumi uchun doimiy blok
             if not settings.DEBUG:
                 self.auto_block_ip(ip_address, 'xss_attack')
             return self._forbidden_response('Xavfli so\'rov topildi (XSS)')
@@ -179,6 +229,7 @@ class AdvancedSecurityMiddleware:
                 'CRITICAL'
             )
             from django.conf import settings
+            # 🚀 AVTO-BLOK: Path traversal uchun blok
             if not settings.DEBUG:
                 self.auto_block_ip(ip_address, 'path_traversal')
             return self._forbidden_response('Xavfli path topildi')
@@ -197,14 +248,22 @@ class AdvancedSecurityMiddleware:
         
         response = self.get_response(request)
         
-        # Ensure security headers are ALWAYS set (standard dict indexing is safest)
+        # Cache successful verification for 10 minutes to save CPU
+        cache.set(f'security_verified_{ip_address}', True, 600)
+        
+        self._set_security_headers(response)
+        return response
+
+    def _set_security_headers(self, response):
+        """Ensure security headers are ALWAYS set"""
+        if not hasattr(response, 'headers') or not isinstance(response.headers, dict):
+            return
         response['X-Content-Type-Options'] = 'nosniff'
         response['X-Frame-Options'] = 'DENY'
         response['X-XSS-Protection'] = '1; mode=block'
         response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-        response['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-        
-        return response
+        response['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+        response['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=(), payment=()'
     
     def _is_using_vpn_proxy(self, request):
         """Detect common VPN/Proxy headers with relaxed rules to prevent false positives"""

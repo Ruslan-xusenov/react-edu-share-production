@@ -231,3 +231,18 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class AllowedIP(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True, help_text="Ruxsat berilgan IP manzili (masalan: 127.0.0.1)")
+    is_active = models.BooleanField(default=True, help_text="Ushbu IP manziliga kirish ruxsat etilganmi?")
+    description = models.CharField(max_length=255, blank=True, help_text="Qurilma yoki foydalanuvchi tavsifi (masalan: Ruslan Laptop)")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Ruxsat etilgan IP'
+        verbose_name_plural = 'Ruxsat etilgan IPlar'
+
+    def __str__(self):
+        return f"{self.ip_address} ({self.description})" if self.description else self.ip_address

@@ -31,6 +31,7 @@ urlpatterns = [
     
     path('api/', include('courses.api_urls')),
     path('api/accounts/', include('accounts.urls')),
+    path('api/community/', include('community.urls')),
     path('api/ai-chat/', __import__('core.views', fromlist=['ai_chat']).ai_chat, name='ai-chat'),
     path('api/stats/', __import__('core.views', fromlist=['api_stats']).api_stats, name='api-stats'),
     path('api/team/', __import__('core.views', fromlist=['api_team']).api_team, name='api-team'),

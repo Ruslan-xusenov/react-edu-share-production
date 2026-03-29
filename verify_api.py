@@ -1,7 +1,7 @@
 import requests
 
 def check_endpoints():
-    base_url = "http://127.0.0.1:8000/api/"
+    base_url = "edushare.uz/api/"
     endpoints = ["categories/", "lessons/", "comments/", "assignments/"]
     
     for endpoint in endpoints:

@@ -24,9 +24,15 @@ export default defineConfig(({ command }) => {
       emptyOutDir: true,
       rollupOptions: {
         output: {
-          // Default bundling
+          manualChunks: {
+            // 🚀 Kutubxonalarni alohida fayllarga bo'lish (Kesh va tezlik uchun)
+            'vendor-framer': ['framer-motion'],
+            'vendor-icons': ['react-icons', 'react-icons/fa'],
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          },
         },
       },
+      chunkSizeWarningLimit: 1000,
     }
   };
 })

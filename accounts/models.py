@@ -12,6 +12,8 @@ class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    is_volunteer = models.BooleanField(default=False, help_text="Volunteer team member")
+    region = models.CharField(max_length=100, blank=True, null=True, help_text="User's home region")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

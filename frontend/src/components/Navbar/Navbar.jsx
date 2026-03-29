@@ -13,6 +13,7 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [communityDropdown, setCommunityDropdown] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -20,6 +21,7 @@ const Navbar = () => {
     useEffect(() => {
         setIsMobileOpen(false);
         setShowDropdown(false);
+        setCommunityDropdown(false);
     }, [location.pathname]);
 
     useEffect(() => {
@@ -64,6 +66,15 @@ const Navbar = () => {
     const navLinks = [
         { to: '/', label: 'HOME' },
         { to: '/courses', label: 'MODULES' },
+        { 
+            label: 'COMMUNITY',
+            isDropdown: true,
+            subLinks: [
+                { to: '/community/books', label: 'LIBRARY' },
+                { to: '/community/news', label: 'NEWSROOM' },
+                { to: '/community/events', label: 'EVENTS' }
+            ]
+        },
         { to: '/leaderboard', label: 'RANKINGS' },
         { to: '/about', label: 'ABOUT' },
     ];
@@ -71,19 +82,58 @@ const Navbar = () => {
     return (
         <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
             <Link to="/" className="navbar-logo">
-                EDUSHARE SCHOOL
+                <img src="/logo.png" alt="EduShare Logo" className="logo-img" />
+                <span>EDUSHARE SCHOOL</span>
             </Link>
 
             <div className={`navbar-nav ${isMobileOpen ? 'mobile-open' : ''}`}>
-                {navLinks.map((link) => (
-                    <Link
-                        key={link.to}
-                        to={link.to}
-                        className="nav-link"
-                        onClick={() => setIsMobileOpen(false)}
-                    >
-                        {link.label}
-                    </Link>
+                {navLinks.map((link, idx) => (
+                    link.isDropdown ? (
+                        <div 
+                            key={idx} 
+                            className="nav-dropdown-wrapper"
+                            onMouseEnter={() => window.innerWidth > 1024 && setCommunityDropdown(true)}
+                            onMouseLeave={() => window.innerWidth > 1024 && setCommunityDropdown(false)}
+                            onClick={() => window.innerWidth <= 1024 && setCommunityDropdown(!communityDropdown)}
+                        >
+                            <span className="nav-link dropdown-trigger">
+                                {link.label}
+                            </span>
+                            <AnimatePresence>
+                                {communityDropdown && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
+                                        className="nav-sub-menu glass"
+                                    >
+                                        {link.subLinks.map(sub => (
+                                            <Link 
+                                                key={sub.to} 
+                                                to={sub.to} 
+                                                className="sub-link"
+                                                onClick={() => {
+                                                    setIsMobileOpen(false);
+                                                    setCommunityDropdown(false);
+                                                }}
+                                            >
+                                                {sub.label}
+                                            </Link>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                        <Link
+                            key={idx}
+                            to={link.to}
+                            className="nav-link"
+                            onClick={() => setIsMobileOpen(false)}
+                        >
+                            {link.label}
+                        </Link>
+                    )
                 ))}
             </div>
 

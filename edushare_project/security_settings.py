@@ -26,7 +26,7 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# Content Security Policy (CSP) - XSS himoyasi
+# 🛡️ Content Security Policy (CSP) - 'django-csp' 4.0+ format
 CONTENT_SECURITY_POLICY = {
     'DIRECTIVES': {
         'default-src': ("'self'",),
@@ -53,9 +53,9 @@ CONTENT_SECURITY_POLICY = {
             "https://fonts.gstatic.com",
             "https://stackpath.bootstrapcdn.com",
         ),
-        'connect-src': ("'self'", "https://edushare.uz", "https://openrouter.ai"),
-        'media-src': ("'self'", "https:", "http:", "blob:", "data:"), # Videolar uchun ruxsat
-        'frame-src': ("'self'", "https://www.youtube.com", "https://youtube.com"), # YouTube embed uchun
+        'connect-src': ("'self'", "https://edushare.uz", "https://openrouter.ai", "http://127.0.0.1:8000"),
+        'media-src': ("'self'", "https:", "http:", "blob:", "data:"),
+        'frame-src': ("'self'", "https://www.youtube.com", "https://youtube.com"),
         'frame-ancestors': ("'none'",),
         'base-uri': ("'self'",),
         'form-action': ("'self'",),
@@ -97,6 +97,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    # 🚀 MUSTAQIL QO'SHILGAN: Katta harf va belgi talablari
+    {
+        'NAME': 'accounts.validators.ComplexityValidator',
+    },
 ]
 
 # Input Sanitization Settings
@@ -107,3 +111,11 @@ BLEACH_STRIP_TAGS = True
 # Rate Limiting Settings (global)
 RATELIMIT_ENABLE = True
 RATELIMIT_USE_CACHE = 'default'
+
+# 🛡️ REST Framework - No-Brute-Force limits
+REST_FRAMEWORK_THROTTLE_RATES = {
+    'anon': '30/minute',   # 60 dan 30 ga kamaytirildi
+    'user': '100/minute',  # 300 dan 100 ga kamaytirildi
+    'auth_login': '5/minute', # Login urinishlarini qat'iy cheklash
+    'auth_signup': '3/minute', # Signup uchun yanada qat'iy
+}

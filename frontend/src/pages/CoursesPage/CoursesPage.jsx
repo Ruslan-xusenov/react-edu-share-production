@@ -112,8 +112,10 @@ const CoursesPage = () => {
         setSelectedSubSubCategory(null);
     };
 
+    const isInitial = view === 'categories' && !searchQuery;
+    
     return (
-        <div className="courses-page">
+        <div className={`courses-page ${isInitial ? 'initial-layout' : ''}`}>
             <Helmet>
                 <title>
                     {selectedCategory

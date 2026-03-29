@@ -59,8 +59,8 @@ apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         const path = window.location.pathname;
-        const publicPaths = ['/login', '/signup', '/courses', '/', '/about', '/leaderboard'];
-        const isPublicPage = publicPaths.some(p => path === p || path.startsWith('/courses/'));
+        const publicPaths = ['/login', '/signup', '/courses', '/', '/about', '/leaderboard', '/community/books', '/community/news', '/community/events'];
+        const isPublicPage = publicPaths.some(p => path === p || path.startsWith('/courses/') || path.startsWith('/community/'));
 
         if (error.response?.status === 401 && !isPublicPage) {
             localStorage.removeItem('authToken');
@@ -111,6 +111,12 @@ export const API_ENDPOINTS = {
     LESSON_QUIZ_SUBMIT: (id) => `/lessons/${id}/submit_quiz/`,
     AI_CHAT: '/ai-chat/',
     TEAM: '/team/',
+    // Community
+    COMMUNITY_BOOKS: '/community/book-reviews/',
+    COMMUNITY_ARTICLES: '/community/articles/',
+    COMMUNITY_EVENTS: '/community/announcements/',
+    ARTICLE_DETAIL: (slug) => `/community/articles/${slug}/`,
+    ARTICLE_VIEW: (slug) => `/community/articles/${slug}/increment_views/`,
     // ── Email OTP parol almashtirish ──────────────────────────
     REQUEST_PASSWORD_CHANGE: '/accounts/request-password-change/',
     VERIFY_PASSWORD_OTP: '/accounts/verify-password-otp/',

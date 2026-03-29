@@ -40,13 +40,11 @@ const Footer = () => {
                     {/* Brand Section */}
                     <motion.div className="footer-brand-section" variants={itemVariants}>
                         <Link to="/" className="footer-brand">
-                            <div className="footer-logo-icon">
-                                <FaGraduationCap />
-                            </div>
-                            <div>
-                                <span className="footer-logo-name">EduShare</span>
-                                <span className="footer-logo-sub">School</span>
-                            </div>
+                             <img src="/logo.png" alt="EduShare Logo" className="footer-logo-img" />
+                             <div>
+                                 <span className="footer-logo-name">EduShare</span>
+                                 <span className="footer-logo-sub">School</span>
+                             </div>
                         </Link>
                         <p className="footer-description">
                             O'quvchilar bir-birlariga o'rgatadigan va o'rganadigan

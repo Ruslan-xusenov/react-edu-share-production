@@ -22,14 +22,18 @@ def _validate_email(email):
 def _validate_password(password):
     if not password or not isinstance(password, str):
         return False, "Parol bo'sh bo'lishi mumkin emas."
-    if len(password) < 8:
-        return False, "Parol kamida 8 ta belgidan iborat bo'lishi kerak."
+    if len(password) < 10:
+        return False, "Parol kamida 10 ta belgidan iborat bo'lishi kerak."
     if len(password) > 128:
         return False, "Parol juda uzun."
-    if not re.search(r'[A-Za-z]', password):
-        return False, "Parolda kamida bitta harf bo'lishi kerak."
+    if not re.search(r'[A-Z]', password):
+        return False, "Parolda kamida bitta katta harf bo'lishi kerak."
+    if not re.search(r'[a-z]', password):
+        return False, "Parolda kamida bitta kichik harf bo'lishi kerak."
     if not re.search(r'\d', password):
         return False, "Parolda kamida bitta raqam bo'lishi kerak."
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False, "Parolda kamida bitta maxsus belgi bo'lishi kerak (!@#$%^&*...)."
     return True, ""
 
 def _sanitize_text(text, max_length=500):

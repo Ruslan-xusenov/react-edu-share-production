@@ -392,7 +392,7 @@ const ProfilePage = () => {
                                     className="form-control"
                                     style={{ width: '100%', padding: '1rem', background: 'transparent', border: 'none', borderBottom: '1px solid var(--border)', color: '#fff' }}
                                     value={formData.phone_number}
-                                    onChange={e => setFormData({ ...formData, phone_number: e.target.value })}
+                                    onChange={e => setFormData({ ...formData, phone_number: e.target.value.replace(/[^\d+]/g, '') })}
                                     placeholder="+998901234567"
                                     required
                                 />
@@ -660,7 +660,7 @@ const ProfilePage = () => {
                                             </div>
                                             <div>
                                                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Telefon Raqam</label>
-                                                <input type="text" className="form-control" style={{ width: '100%', padding: '0.5rem' }} value={formData.phone_number || ''} onChange={e => setFormData({ ...formData, phone_number: e.target.value })} />
+                                                <input type="text" className="form-control" style={{ width: '100%', padding: '0.5rem' }} value={formData.phone_number || ''} onChange={e => setFormData({ ...formData, phone_number: e.target.value.replace(/[^\d+]/g, '') })} />
                                             </div>
                                             <div>
                                                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Maktab</label>
