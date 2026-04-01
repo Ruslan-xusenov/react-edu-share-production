@@ -18,18 +18,19 @@ HLS_PROFILES = [
         'name': '1080p',
         'width': 1920,
         'height': 1080,
-        'video_bitrate': '6000k',
+        'video_bitrate': '8000k',
         'audio_bitrate': '192k',
-        'bandwidth': 6500000,
+        'bandwidth': 8500000,
     },
     {
         'name': '720p',
         'width': 1280,
         'height': 720,
-        'video_bitrate': '4000k',
+        'video_bitrate': '5000k',
         'audio_bitrate': '128k',
-        'bandwidth': 4500000,
+        'bandwidth': 5500000,
     },
+
     {
         'name': '480p',
         'width': 854,
