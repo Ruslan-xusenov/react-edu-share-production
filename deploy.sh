@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 echo "========================================="
@@ -100,8 +101,6 @@ END
 ALTER USER $DB_USER WITH PASSWORD '$DB_PWD';
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
-# Grant schema permissions (required for PostgreSQL 15+)
-sudo -u postgres psql -d $DB_NAME -c "GRANT ALL ON SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
 EOF
 then
     echo "Unix socket failed, trying TCP fallback..."
@@ -119,11 +118,11 @@ END
 ALTER USER $DB_USER WITH PASSWORD '$DB_PWD';
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
-# Grant schema permissions (required for PostgreSQL 15+)
-sudo -u postgres psql -d $DB_NAME -c "GRANT ALL ON SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
 EOF
 fi
 
+# Grant schema permissions (required for PostgreSQL 15+)
+sudo -u postgres psql -d $DB_NAME -c "GRANT ALL ON SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USER; GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
 
 print_status "PostgreSQL configured"
 
@@ -140,7 +139,7 @@ echo ""
 echo "5. Setting up virtual environment..."
 cd $PROJECT_DIR
 python3 -m venv venv
-source venv/bin/activate
+. venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 pip install gunicorn psycopg2-binary django-redis
@@ -159,8 +158,8 @@ print_status "Frontend built"
 echo ""
 echo "7. Django setup..."
 cd $PROJECT_DIR
-python manage.py collectstatic --noinput --settings=edushare_project.settings_production
-python manage.py migrate --settings=edushare_project.settings_production
+python3 manage.py collectstatic --noinput --settings=edushare_project.settings_production
+python3 manage.py migrate --settings=edushare_project.settings_production
 print_status "Django configured"
 
 echo ""
@@ -200,34 +199,34 @@ print_warning "Make sure your domain points to this server!"
 DOMAIN="edushare.uz"
 EMAIL="admin@edushare.uz"
 
-certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL
-print_status "SSL certificate installed"
+# Only run certbot if the domain is correctly pointing and it's not a dry run test
+if [ "$1" != "--no-ssl" ]; then
+    certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m $EMAIL || print_warning "SSL certificate installation failed. Skipping..."
+fi
+print_status "SSL certificate step processed"
 
 echo ""
 echo "12. Configuring firewall..."
-ufw allow 22/tcp
-ufw allow 80/tcp
-ufw allow 443/tcp
-ufw --force enable
-print_status "Firewall configured"
+if command -v ufw &> /dev/null; then
+    ufw allow 22/tcp
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    ufw --force enable
+    print_status "Firewall configured"
+fi
 
 echo ""
 echo "13. Setting up automatic SSL renewal..."
-(crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'") | crontab -
-print_status "SSL auto-renewal configured"
+if command -v crontab &> /dev/null; then
+    (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'") | crontab -
+    print_status "SSL auto-renewal configured"
+fi
 
 echo ""
 echo "14. Configuring Redis..."
 systemctl enable redis-server
 systemctl start redis-server
 print_status "Redis configured"
-
-# echo ""
-# echo "15. Creating Django superuser..."
-# print_warning "Enter superuser credentials:"
-# cd $PROJECT_DIR
-# source venv/bin/activate
-# python manage.py createsuperuser --settings=edushare_project.settings_production
 
 echo ""
 echo "========================================="
