@@ -1,10 +1,7 @@
-#!/bin/bash
 set -e
 
-# Baza bilan ishlaydigan xizmatlarni to'xtatamiz
 systemctl stop edushare || true
 
-# Ma'lumotlar bazasiga to'g'ridan-to'g'ri (parolsiz) kiramiz
 sudo -u postgres psql << EOF
 -- Eski ulanishlarni uzamiz
 SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'edushare_db' AND pid <> pg_backend_pid();
@@ -18,5 +15,4 @@ CREATE DATABASE edushare_db OWNER edushare_user;
 GRANT ALL PRIVILEGES ON DATABASE edushare_db TO edushare_user;
 EOF
 
-# PostgreSQL sozlamalarini yangilaymiz (agar kerak bo'lsa)
 echo "Ma'lumotlar bazasi va foydalanuvchi muvaffaqiyatli yaratildi!"
